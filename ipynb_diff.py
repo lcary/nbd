@@ -121,8 +121,11 @@ class Converter(object):
     return relpath_dict
 
   def _write_file(self, path, content):
-    with open(ospath.join(self.output_dir, path), 'w') as f:
+    abspath = ospath.abspath(ospath.join(self.output_dir, path))
+    with open(abspath, 'w') as f:
       f.write(content)
+    nbytes = ospath.getsize(abspath)
+    logger.debug("wrote {} bytes to {}".format(nbytes, abspath))
 
   def _write_data(self):
     data = dict(
@@ -141,10 +144,15 @@ class Converter(object):
 
     self._write_file('readme.txt', content)
 
+  def _write_gitignore(self):
+    content = ("*.log\n")
+    self._write_file('.gitignore', content)
+
   def _setup(self):
     dir_util.mkpath(self.output_dir)
     self._write_data()
     self._write_readme()
+    self._write_gitignore()
 
 
   def _nbconvert(self, path, basename, export_fmt):
