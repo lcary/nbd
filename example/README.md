@@ -5,10 +5,14 @@ This is a far-too-simple example of using the tool.
 
 _TODO_: Create an example with a non-trivial diff that wouldn't normally work in git diff.
 
+Lets start by changing the working directory to this directory, e.g.:
+```
+$ cd ipynb_diff/example
+```
+
 Run as follows:
 ```
-$ cd $this_directory
-$ python ../ipynb_diff.py ./def_wikipedia_visualization.ipynb
+$ ../ipynb_diff_cli ./def_wikipedia_visualization.ipynb
 ...
 finished: generated content for 1 ipynb file(s) in example/ipynb_generated/
 ```
@@ -21,11 +25,10 @@ See the generated code:
     ├── data.json
     ├── def_wikipedia_visualization.ipynb.py
     ├── def_wikipedia_visualization.ipynb.rst
-    ├── ipynb_diff.py.log
     └── readme.txt
 ```
 
-Lets commit that code (note that there is a gitignore to ignore the ipynb_diff.py.log):
+Lets commit that code:
 ```
 git add ipynb_generated/
 git commit -m "committing auto-generated ipynb files"
@@ -40,7 +43,7 @@ perl -pi -e 's/english 1.20478510204 12.656038024/english nan nan/g' $filename
 
 Rerun the tool:
 ```
-$ python ../ipynb_diff.py ./def_wikipedia_visualization.ipynb
+$ ../ipynb_diff_cli ./def_wikipedia_visualization.ipynb
 ...
 finished: generated content for 1 ipynb file(s) in example/ipynb_generated/
 ```
@@ -67,7 +70,7 @@ $ git diff
 We can show that removing the changes removes the differences:
 ```
 $ git checkout -- def_wikipedia_visualization.ipynb
-$ python ../ipynb_diff.py ./def_wikipedia_visualization.ipynb
+$ ../ipynb_diff_cli ./def_wikipedia_visualization.ipynb
 ...
 $ git status
 On branch master

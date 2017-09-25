@@ -41,3 +41,31 @@ The pandoc universal document converter can be installed with:
 ```
 brew install pandoc
 ```
+
+Usage
+-----
+
+Run from root with:
+```
+./ipynb_diff_cli
+```
+
+Help:
+```
+$ ./ipynb_diff_cli -h
+usage: main.py [-h] [--output_dir OUTPUT_DIR] files [files ...]
+
+positional arguments:
+  files
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --output_dir OUTPUT_DIR
+```
+
+Example usage:
+```
+$ ./ipynb_diff_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
+```
+
+See more in the `example/` directory.
