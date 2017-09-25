@@ -1,0 +1,20 @@
+2017-09-25 13:40:47,216 - INFO - [1;31;40mrunning[0m: git rev-parse --show-toplevel
+2017-09-25 13:40:47,225 - INFO - [1;32;40mcd[0m: /Users/luccary/workspace/ipynb_diff
+2017-09-25 13:40:47,226 - DEBUG - Converting example/example/def_wikipedia_visualization.ipynb to python
+2017-09-25 13:40:47,226 - INFO - [1;31;40mrunning[0m: jupyter nbconvert example/example/def_wikipedia_visualization.ipynb --output=example_def_wikipedia_visualization.ipynb --output-dir=example/ipynb_generated --to=python
+2017-09-25 13:40:47,493 - ERROR - message
+Traceback (most recent call last):
+  File "../ipynb_diff.py", line 139, in _nbconvert
+  File "../ipynb_diff.py", line 58, in run
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/subprocess.py", line 573, in check_output
+    raise CalledProcessError(retcode, cmd, output=output)
+CalledProcessError: Command '['jupyter', 'nbconvert', 'example/example/def_wikipedia_visualization.ipynb', '--output=example_def_wikipedia_visualization.ipynb', '--output-dir=example/ipynb_generated', '--to=python']' returned non-zero exit status 255
+2017-09-25 13:40:47,493 - INFO - [1;32;40mcd[0m: /Users/luccary/workspace/ipynb_diff/example
+2017-09-25 13:50:22,166 - INFO - [1;31;40mrunning[0m: git rev-parse --show-toplevel
+2017-09-25 13:50:22,197 - INFO - [1;32;40mcd[0m: /Users/luccary/workspace/ipynb_diff
+2017-09-25 13:50:22,198 - DEBUG - Converting example/def_wikipedia_visualization.ipynb to python
+2017-09-25 13:50:22,198 - INFO - [1;31;40mrunning[0m: jupyter nbconvert example/def_wikipedia_visualization.ipynb --output=def_wikipedia_visualization.ipynb --output-dir=example/ipynb_generated --to=python
+2017-09-25 13:50:23,322 - DEBUG - Converting example/def_wikipedia_visualization.ipynb to rst
+2017-09-25 13:50:23,322 - INFO - [1;31;40mrunning[0m: jupyter nbconvert example/def_wikipedia_visualization.ipynb --output=def_wikipedia_visualization.ipynb --output-dir=example/ipynb_generated --to=rst
+2017-09-25 13:50:24,083 - INFO - [1;32;40mfinished[0m: generated content for 1 ipynb file(s) in example/ipynb_generated/
+2017-09-25 13:50:24,083 - INFO - [1;32;40mcd[0m: /Users/luccary/workspace/ipynb_diff/example
