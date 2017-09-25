@@ -21,7 +21,7 @@ class NotebookConverter(object):
     self.repo_root = repo_root
     # make all paths relative to root of the git repo
     self.output_dir = normrelpath(output_dir, repo_root)
-    self.files_converted = {}
+    self.files_converted = 0
 
   def convert(self, files):
     self._setup()
@@ -38,11 +38,11 @@ class NotebookConverter(object):
       file_id = get_file_id(filepath, self.repo_root)
       self.command.convert_to_python(filepath, file_id)
       self.command.convert_to_rst(filepath, file_id)
-      self.files_converted[file_id] = filepath
+      self.files_converted += 1
 
   def _teardown(self):
     msg = "generated content for {} ipynb file(s) in {}/".format(
-      len(self.files_converted), self.output_dir)
+      self.files_converted, self.output_dir)
     echo("finished", ANSI_LIGHT_GREEN, msg)
     self._write_data(datetime.now())
 
