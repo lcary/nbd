@@ -8,6 +8,8 @@ from .command import (ANSI_LIGHT_GREEN, Command, echo)
 
 logger = logging.getLogger()
 
+PKG_NAME = 'ipynb_diff'
+
 
 class Converter(object):
   README_MESSAGE = (
@@ -49,7 +51,7 @@ class Converter(object):
 
   def _write_data(self):
     data = dict(
-      program=ospath.basename(__file__),
+      program=PKG_NAME,
       output_dir=self.output_dir,
       time_created=str(datetime.now()),
       files_converted=self.path_dict)
@@ -60,7 +62,7 @@ class Converter(object):
   def _write_readme(self):
     content = self.README_MESSAGE.format(
       output_dir=self.output_dir,
-      program=ospath.basename(__file__))
+      program=PKG_NAME)
 
     self._write_file('readme.txt', content)
 

@@ -11,13 +11,15 @@ from .convert import Converter
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+PKG_NAME = 'ipynb_diff'
+
 
 def _log_setup(log_dir):
   # log setup
   formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
   # output to file
-  log_file = '{}.log'.format(ospath.basename(__file__))
+  log_file = '{}.log'.format(PKG_NAME)
   fh = logging.FileHandler(ospath.join(log_dir, log_file))
   fh.setLevel(logging.DEBUG)
   fh.setFormatter(formatter)
