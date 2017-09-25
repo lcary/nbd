@@ -1,98 +1,13 @@
-#!/bin/python
-
-from argparse import ArgumentParser
-from contextlib import contextmanager
 from datetime import datetime
 from distutils import dir_util
 import json
 import logging
-from os import (chdir, getcwd)
 from os import path as ospath
-from subprocess import (CalledProcessError, check_output)
+from subprocess import CalledProcessError
 
-ANSI_LIGHT_RED = 31
-ANSI_LIGHT_GREEN = 32
+from .command import (ANSI_LIGHT_GREEN, Command, echo)
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-
-
-def _log_setup(log_dir):
-  # log setup
-  formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-  # output to file
-  log_file = '{}.log'.format(ospath.basename(__file__))
-  fh = logging.FileHandler(ospath.join(log_dir, log_file))
-  fh.setLevel(logging.DEBUG)
-  fh.setFormatter(formatter)
-  logger.addHandler(fh)
-
-  # output to console
-  ch = logging.StreamHandler()
-  ch.setLevel(logging.INFO)
-  ch.setFormatter(formatter)
-  logger.addHandler(ch)
-
-
-def color(msg, ansicode):
-  return '\033[1;{ansicode};40m{msg}\033[0m'.format(msg=msg, ansicode=ansicode)
-
-
-def echo(subject, ansicode, msg):
-  logger.info('{}: {}'.format(color(subject, ansicode), msg))
-
-
-def cd_echo(path):
-  echo('cd', ANSI_LIGHT_GREEN, path)
-  chdir(path)
-
-
-@contextmanager
-def cd_if_necessary(path):
-  orig = getcwd()
-  should_cd = (orig != path)
-  try:
-    if should_cd:
-      cd_echo(path)
-    yield
-  finally:
-    if should_cd:
-      cd_echo(orig)
-    else:
-      pass
-
-
-class Command(object):
-
-  @staticmethod
-  def _echo(args):
-    echo("running", ANSI_LIGHT_RED, " ".join(args))
-
-  @classmethod
-  def run(cls, args, echo=True):
-    if echo:
-      cls._echo(args)
-    return check_output(args)
-
-
-@contextmanager
-def cd_repo_root():
-  args = ['git', 'rev-parse', '--show-toplevel']
-  repo_root = Command().run(args).strip('\n')
-  try:
-    with cd_if_necessary(repo_root):
-      yield repo_root
-  finally:
-    pass
-
-
-def get_abspath_dict(paths):
-  path_dict = {}
-  for path in paths:
-    basename = path.replace(ospath.sep, "_")
-    path_dict[basename] = ospath.abspath(path)
-  return path_dict
 
 
 class Converter(object):
@@ -193,23 +108,3 @@ class Converter(object):
     self._to_python()
     self._to_rst()
     self._teardown()
-
-
-def main():
-  parser = ArgumentParser()
-  parser.add_argument('files', nargs='+')
-  parser.add_argument('--output_dir', default='ipynb_generated')
-  args = parser.parse_args()
-
-  # convert input paths to absolute paths
-  path_dict = get_abspath_dict(args.files)
-  output_dir = ospath.abspath(args.output_dir)
-
-  _log_setup(output_dir)
-
-  # cd to the root of the git repo and convert files
-  with cd_repo_root() as repo_root:
-    Converter(path_dict, output_dir, repo_root).convert()
-
-if __name__ == '__main__':
-  main()

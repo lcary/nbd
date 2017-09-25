@@ -1,0 +1,57 @@
+#!/bin/python
+
+from argparse import ArgumentParser
+import logging
+from os import path as ospath
+
+from .command import cd_repo_root
+from .convert import Converter
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+
+def _log_setup(log_dir):
+  # log setup
+  formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+  # output to file
+  log_file = '{}.log'.format(ospath.basename(__file__))
+  fh = logging.FileHandler(ospath.join(log_dir, log_file))
+  fh.setLevel(logging.DEBUG)
+  fh.setFormatter(formatter)
+  logger.addHandler(fh)
+
+  # output to console
+  ch = logging.StreamHandler()
+  ch.setLevel(logging.INFO)
+  ch.setFormatter(formatter)
+  logger.addHandler(ch)
+
+
+def get_abspath_dict(paths):
+  path_dict = {}
+  for path in paths:
+    basename = path.replace(ospath.sep, "_")
+    path_dict[basename] = ospath.abspath(path)
+  return path_dict
+
+
+def main():
+  parser = ArgumentParser()
+  parser.add_argument('files', nargs='+')
+  parser.add_argument('--output_dir', default='ipynb_generated')
+  args = parser.parse_args()
+
+  # convert input paths to absolute paths
+  path_dict = get_abspath_dict(args.files)
+  output_dir = ospath.abspath(args.output_dir)
+
+  _log_setup(output_dir)
+
+  # cd to the root of the git repo and convert files
+  with cd_repo_root() as repo_root:
+    Converter(path_dict, output_dir, repo_root).convert()
+
+if __name__ == '__main__':
+  main()
