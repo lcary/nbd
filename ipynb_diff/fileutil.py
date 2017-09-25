@@ -12,21 +12,14 @@ def normrelpath(path, root_dir):
   return ospath.normpath(ospath.relpath(path, start=root_dir))
 
 
-def get_path_dict(cls, paths, root_dir):
+def get_file_id(filepath, root_dir):
   """
-  A path dictionary where each key is a unique identifier for both
-  file path and file directory.
+  Returns a unique identifier based on file path and directory.
 
   Goals: Use unique keys, e.g. in cases where multiple directories
   contain files with the same names.
   """
-  delimiter = "__"
-  path_dict = {}
-  for path in paths:
-    path = normrelpath(path, root_dir)
-    basename = path.replace(ospath.sep, delimiter)
-    path_dict[basename] = path
-  return path_dict
+  return filepath.replace(ospath.sep, "__")
 
 
 def write_file(dir_path, filename, content):

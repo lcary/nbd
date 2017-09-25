@@ -4,5 +4,7 @@
   }, 
   "output_dir": "example/ipynb_generated", 
   "program": "ipynb_diff", 
-  "time_created": "2017-09-25 15:39:32.145426"
+  "runtime_seconds": 1.296938, 
+  "time_finished": "2017-09-25 16:10:34.138241", 
+  "time_started": "2017-09-25 16:10:32.841303"
 }

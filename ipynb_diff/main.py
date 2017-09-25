@@ -38,7 +38,7 @@ def main():
   args = parser.parse_args()
 
   # convert input paths to absolute paths
-  path_dict = map(ospath.abspath, args.files)
+  files = map(ospath.abspath, args.files)
   output_dir = ospath.abspath(args.output_dir)
 
   # create output dir for generated code
@@ -48,7 +48,7 @@ def main():
 
   # cd to the root of the git repo and convert files
   with cd_repo_root() as repo_root:
-    NotebookConverter(path_dict, output_dir, repo_root).convert()
+    NotebookConverter(output_dir, repo_root).convert(files)
 
 if __name__ == '__main__':
   main()

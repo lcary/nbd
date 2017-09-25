@@ -1,11 +1,15 @@
-Example ipynb_diff.py usage
-===========================
+ipynb_diff.py Tutorial
+======================
 
-This is a far-too-simple example of using the tool.
+This is a far-too-simple example of using the tool to
+convert from ipynb files to python and plain text files.
 
 _TODO_: Create an example with a non-trivial diff that wouldn't normally work in git diff.
 
-Lets start by changing the working directory to the root directory, e.g.:
+Generating code
+---------------
+
+Lets start by changing the working directory to the root directory of the repo, e.g.:
 ```
 $ cd ipynb_diff/
 ```
@@ -33,6 +37,9 @@ Lets commit that code:
 git add example/ipynb_generated/
 git commit -m "committing auto-generated ipynb files"
 ```
+
+Displaying generated changes
+----------------------------
 
 Try changing the ipynb source file:
 ```
@@ -67,6 +74,9 @@ $ git diff
 ... < shows diff >
 ```
 
+Reverting changes
+-----------------
+
 We can show that removing the changes removes the differences:
 ```
 $ git checkout -- def_wikipedia_visualization.ipynb
@@ -80,5 +90,8 @@ Changes not staged for commit:
 
     modified:   example/ipynb_generated/data.json
 ```
+
+The only remaining modified file is a data file that shows the timestamp
+of the last conversion from ipynb files to python and plain text files.
 
 Voila! We proved the tool helps us see a human-readable diff of our jupyter notebook.
