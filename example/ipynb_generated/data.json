@@ -1,8 +1,8 @@
 {
   "files_converted": {
-    "example_def_wikipedia_visualization.ipynb": "example/def_wikipedia_visualization.ipynb"
+    "example__def_wikipedia_visualization.ipynb": "example/def_wikipedia_visualization.ipynb"
   }, 
   "output_dir": "example/ipynb_generated", 
   "program": "ipynb_diff", 
-  "time_created": "2017-09-25 15:08:17.982546"
+  "time_created": "2017-09-25 15:39:32.145426"
 }
