@@ -1,5 +1,4 @@
 from datetime import datetime
-from distutils import dir_util
 import json
 import logging
 from os import path as ospath
@@ -21,19 +20,25 @@ class Converter(object):
   class JupyterCommandFailure(Exception):
     pass
 
-  def __init__(self, path_dict, output_dir, repo_root):
+  def __init__(self, path_list, output_dir, repo_root):
     self.cmd = Command()
     self.repo_root = repo_root
     # make all paths relative to root of the git repo
-    self.output_dir = ospath.relpath(output_dir, start=repo_root)
-    self.path_dict = self._convert_to_relpaths(path_dict, repo_root)
+    self.output_dir = self.relpath(output_dir, repo_root)
+    self.path_dict = self._get_path_dict(path_list, repo_root)
 
   @staticmethod
-  def _convert_to_relpaths(abspath_dict, root_dir):
-    relpath_dict = {}
-    for (key, path) in abspath_dict.items():
-      relpath_dict[key] = ospath.relpath(path, start=root_dir)
-    return relpath_dict
+  def relpath(path, root_dir):
+    return ospath.normpath(ospath.relpath(path, start=root_dir))
+
+  @classmethod
+  def _get_path_dict(cls, paths, root_dir):
+    path_dict = {}
+    for path in paths:
+      path = cls.relpath(path, root_dir)
+      basename = path.replace(ospath.sep, "_")
+      path_dict[basename] = path
+    return path_dict
 
   def _write_file(self, path, content):
     abspath = ospath.abspath(ospath.join(self.output_dir, path))
@@ -64,11 +69,9 @@ class Converter(object):
     self._write_file('.gitignore', content)
 
   def _setup(self):
-    dir_util.mkpath(self.output_dir)
     self._write_data()
     self._write_readme()
     self._write_gitignore()
-
 
   def _nbconvert(self, path, basename, export_fmt):
     cmd = ['jupyter', 'nbconvert', path,

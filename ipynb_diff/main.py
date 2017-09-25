@@ -1,6 +1,7 @@
 #!/bin/python
 
 from argparse import ArgumentParser
+from distutils import dir_util
 import logging
 from os import path as ospath
 
@@ -29,14 +30,6 @@ def _log_setup(log_dir):
   logger.addHandler(ch)
 
 
-def get_abspath_dict(paths):
-  path_dict = {}
-  for path in paths:
-    basename = path.replace(ospath.sep, "_")
-    path_dict[basename] = ospath.abspath(path)
-  return path_dict
-
-
 def main():
   parser = ArgumentParser()
   parser.add_argument('files', nargs='+')
@@ -44,8 +37,11 @@ def main():
   args = parser.parse_args()
 
   # convert input paths to absolute paths
-  path_dict = get_abspath_dict(args.files)
+  path_dict = map(ospath.abspath, args.files)
   output_dir = ospath.abspath(args.output_dir)
+
+  # create output dir for generated code
+  dir_util.mkpath(output_dir)
 
   _log_setup(output_dir)
 
