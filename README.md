@@ -6,8 +6,12 @@ Generates code for each ipynb input script for human-readable diff viewing.
 Purpose
 -------
 
-The intent of this project is for text-based diff-viewing. For something
-more advanced, see: https://nbdime.readthedocs.io/en/latest/
+The intent of this project is for text-based diff-viewing.
+
+This was raised by a concern of fellow ipython and jupyter notebook writers
+with the fact that diff viewing can be a burden.
+
+For something more advanced, see: https://nbdime.readthedocs.io/en/latest/
 
 Requirements
 ------------
