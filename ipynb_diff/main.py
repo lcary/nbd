@@ -6,12 +6,11 @@ import logging
 from os import path as ospath
 
 from .command import cd_repo_root
-from .convert import Converter
+from .const import PKG_NAME
+from .nbconvert import NotebookConverter
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
-PKG_NAME = 'ipynb_diff'
 
 
 def _log_setup(log_dir):
@@ -49,7 +48,7 @@ def main():
 
   # cd to the root of the git repo and convert files
   with cd_repo_root() as repo_root:
-    Converter(path_dict, output_dir, repo_root).convert()
+    NotebookConverter(path_dict, output_dir, repo_root).convert()
 
 if __name__ == '__main__':
   main()
