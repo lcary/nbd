@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from distutils import dir_util
 import json
+import logging
 from os import (chdir, getcwd)
 from os import path as ospath
 from subprocess import (CalledProcessError, check_output)
@@ -12,13 +13,34 @@ from subprocess import (CalledProcessError, check_output)
 ANSI_LIGHT_RED = 31
 ANSI_LIGHT_GREEN = 32
 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+
+def _log_setup(log_dir):
+  # log setup
+  formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+  # output to file
+  log_file = '{}.log'.format(ospath.basename(__file__))
+  fh = logging.FileHandler(ospath.join(log_dir, log_file))
+  fh.setLevel(logging.DEBUG)
+  fh.setFormatter(formatter)
+  logger.addHandler(fh)
+
+  # output to console
+  ch = logging.StreamHandler()
+  ch.setLevel(logging.INFO)
+  ch.setFormatter(formatter)
+  logger.addHandler(ch)
+
 
 def color(msg, ansicode):
   return '\033[1;{ansicode};40m{msg}\033[0m'.format(msg=msg, ansicode=ansicode)
 
 
 def echo(subject, ansicode, msg):
-  print('{}: {}'.format(color(subject, ansicode), msg))
+  logger.info('{}: {}'.format(color(subject, ansicode), msg))
 
 
 def cd_echo(path):
@@ -133,16 +155,18 @@ class Converter(object):
 
     try:
       return self.cmd.run(cmd)
-    except OSError as e:
-      msg = ("Unable to call jupyter.\n"
-        "Please install all requirements in requirements.txt first.\n"
-        "Original Exception:\n{}".format(e))
+    except OSError:
+      msg = ("The jupyter command was not found on your machine. "
+        "Please install all requirements in requirements.txt first.")
+      logging.exception("message")
       raise self.JupyterCommandMissing(msg)
-    except CalledProcessError as e:
-      raise self.JupyterCommandFailure(e)
+    except CalledProcessError:
+      logging.exception("message")
+      raise self.JupyterCommandFailure("The jupyter command failed.")
 
   def _nbconvert_list(self, export_fmt):
     for (basename, path) in self.path_dict.items():
+      logger.debug('Converting {} to {}'.format(path, export_fmt))
       self._nbconvert(path, basename, export_fmt)
 
   def _to_python(self):
@@ -172,6 +196,8 @@ def main():
   # convert input paths to absolute paths
   path_dict = get_abspath_dict(args.files)
   output_dir = ospath.abspath(args.output_dir)
+
+  _log_setup(output_dir)
 
   # cd to the root of the git repo and convert files
   with cd_repo_root() as repo_root:
