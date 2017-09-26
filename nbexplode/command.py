@@ -17,19 +17,6 @@ def echo(subject, ansicode, msg):
   logger.info('{}: {}'.format(_color(subject, ansicode), msg))
 
 
-class Command(object):
-
-  @staticmethod
-  def _echo(args):
-    echo("running", ANSI_LIGHT_RED, " ".join(args))
-
-  @classmethod
-  def run(cls, args, echo=True):
-    if echo:
-      cls._echo(args)
-    return check_output(args)
-
-
 def _cd_with_echo(path):
   echo('cd', ANSI_LIGHT_GREEN, path)
   chdir(path)
@@ -49,11 +36,15 @@ def _cd_if_necessary(path):
     else:
       pass
 
+def git_repo_root():
+  args = ['git', 'rev-parse', '--show-toplevel']
+  echo("running", ANSI_LIGHT_RED, " ".join(args))
+  return check_output(args).strip('\n')
+
 
 @contextmanager
 def cd_repo_root():
-  args = ['git', 'rev-parse', '--show-toplevel']
-  repo_root = Command().run(args).strip('\n')
+  repo_root = git_repo_root()
   try:
     with _cd_if_necessary(repo_root):
       yield repo_root

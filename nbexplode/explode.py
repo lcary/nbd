@@ -65,7 +65,7 @@ class NotebookExploder(object):
     write_file(self.output_dir, 'readme.txt', content)
 
   def _write_gitignore(self):
-    content = "\n".join("*.log", self.RUNTIME_DATA_FILENAME)
+    content = "\n".join(["*.log", self.RUNTIME_DATA_FILENAME])
     write_file(self.output_dir, '.gitignore', content)
 
   def _write_runtime_data(self, end_time):
