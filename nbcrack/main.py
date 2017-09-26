@@ -7,7 +7,7 @@ from os import path as ospath
 
 from .command import cd_repo_root
 from .const import PKG_NAME
-from .explode import NotebookExploder
+from .export import NotebookExporter
 from .fileops import normrelpath
 
 logger = logging.getLogger()
@@ -35,7 +35,7 @@ def _log_setup(log_dir):
 def main():
   parser = ArgumentParser()
   parser.add_argument('files', nargs='+')
-  parser.add_argument('--output-dir', default='ipynb_generated')
+  parser.add_argument('--output-dir', default='nbcrack_generated')
   parser.add_argument('--nbformat-version', default=4, type=int)
   args = parser.parse_args()
 
@@ -54,10 +54,10 @@ def main():
     output_dir = normrelpath(output_dir, repo_root)
     files = [normrelpath(filepath, repo_root) for filepath in files]
 
-    exploder = NotebookExploder(output_dir, args.nbformat_version)
-    exploder.setup()
-    exploder.explode(files)
-    exploder.teardown()
+    exporter = NotebookExporter(output_dir, args.nbformat_version)
+    exporter.setup()
+    exporter.process(files)
+    exporter.teardown()
 
 if __name__ == '__main__':
   main()

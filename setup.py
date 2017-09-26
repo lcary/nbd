@@ -27,16 +27,16 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 setup(
-    name='nbexplode',
+    name='nbcrack',
 
     # Using https://packaging.python.org/en/latest/single_source_version.html
-    version=find_version("nbexplode", "__init__.py"),
+    version=find_version("nbcrack", "__init__.py"),
 
     description='ipython notebook diffing tool',
     long_description=read_long_description(),
 
     # project homepage
-    url='https://github.com/lcary/nbexplode',
+    url='https://github.com/lcary/nbcrack',
 
     author='Luc Cary',
     author_email='luc.cary@gmail.com',
@@ -64,6 +64,8 @@ setup(
 
     # use find_packages() to find the package
     packages=find_packages(exclude=['example']),
+    package_data={'': ['README.md']},
+    include_package_data=True,
 
     # runtime dependencies
     install_requires=['nbconvert', 'nbformat'],
@@ -71,7 +73,9 @@ setup(
     # entry point to provide executable scripts
     entry_points={
         'console_scripts': [
-            'nbexplode=nbexplode.main:main',
+            'nbcrack=nbcrack.main:main',
         ],
     },
+
+
 )

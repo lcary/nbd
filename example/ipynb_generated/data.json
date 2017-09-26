@@ -1,7 +1,7 @@
 {
   "files_converted": 1, 
-  "output_dir": "example/ipynb_generated", 
-  "program": "nbexplode", 
+  "output_dir": "example/nbcrack_generated", 
+  "program": "nbcrack", 
   "runtime_seconds": 0.750051, 
   "time_finished": "2017-09-26 15:17:49.296731", 
   "time_started": "2017-09-26 15:17:48.546680"

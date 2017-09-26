@@ -1,5 +1,0 @@
-#!/bin/sh
-echo "Running nbexplode from root of repo:"
-cd "$( dirname "${BASH_SOURCE[0]}" )"
-pwd
-python -m nbexplode.main "$@"

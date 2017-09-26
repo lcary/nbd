@@ -1,5 +1,5 @@
-nbexplode
-==========
+nbcrack
+=======
 
 Generates code/files for each ipynb input script for human-readable diff viewing.
 
@@ -40,6 +40,9 @@ The pandoc universal document converter can be installed with:
 brew install pandoc
 ```
 
+Since it's for diffing, this tool should be run inside a git repo
+to work properly.
+
 Build
 -----
 
@@ -51,9 +54,9 @@ python setup.py sdist
 Install
 -------
 
-Once the sdist is built (see above), you can install it with pip:
+Once the sdist is built (see above), you can install it with pip. e.g.:
 ```
-pip install dist/nbexplode-1.0.0.dev1.tar.gz
+pip install dist/nbcrack-1.0.0.dev1.tar.gz
 ```
 
 _NOTE_: If you have not already pip-installed nbconvert, running that command will install it for you.
@@ -63,12 +66,12 @@ Usage
 
 Run from root with:
 ```
-./nbexplode_cli
+nbcrack
 ```
 
 Help:
 ```
-$ ./nbexplode_cli -h
+$ nbcrack -h
 usage: main.py [-h] [--output_dir OUTPUT_DIR] files [files ...]
 
 positional arguments:
@@ -81,7 +84,7 @@ optional arguments:
 
 Example usage:
 ```
-$ ./nbexplode_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
+$ nbcrack --output_dir example/nbcrack_generated ./example/def_wikipedia_visualization.ipynb
 ```
 
 See more in the `example/` directory.
