@@ -1,12 +1,12 @@
 nbcrack
 =======
 
-Generates code/files for each ipynb input script for human-readable diff viewing.
+Turn ipython and jupyter notebooks into something that can be diffed by a human.
 
 Purpose
 -------
 
-The intent of this project is for text-based diff-viewing.
+The intent of this project is to simplify text-based diff-viewing for notebooks.
 
 This was raised by a concern of fellow ipython and jupyter notebook writers
 with the fact that diff viewing can be a burden.
