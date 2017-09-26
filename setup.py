@@ -63,7 +63,7 @@ setup(
     keywords='ipynb jupyter ipython diff git',
 
     # use find_packages() to find the package
-    packages=find_packages(exclude=['contrib', 'docs', 'tests', 'example']),
+    packages=find_packages(exclude=['example']),
 
     # runtime dependencies
     install_requires=['jupyter'],
