@@ -23,7 +23,7 @@ def _cd_with_echo(path):
 
 
 @contextmanager
-def _cd_if_necessary(path):
+def cd_if_necessary(path):
   orig = getcwd()
   should_cd = (orig != path)
   try:
@@ -40,13 +40,3 @@ def git_repo_root():
   args = ['git', 'rev-parse', '--show-toplevel']
   echo("running", ANSI_LIGHT_RED, " ".join(args))
   return check_output(args).strip('\n')
-
-
-@contextmanager
-def cd_repo_root():
-  repo_root = git_repo_root()
-  try:
-    with _cd_if_necessary(repo_root):
-      yield repo_root
-  finally:
-    pass

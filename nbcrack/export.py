@@ -26,12 +26,11 @@ class NotebookExporter(object):
     '{program}. Do not edit manually.\n')
   RUNTIME_DATA_FILENAME = 'data.json'
 
-  def __init__(self, output_dir, nbformat_version):
+  def __init__(self, output_dir):
     self.start_time = datetime.now()
     self.output_dir = output_dir
     self.notebooks_processed = 0
     # delegate exporting to nbexport
-    self.nbformat_version = nbformat_version
     self.python_exporter = PythonExporter()
     self.rst_exporter = RSTExporter()
 
@@ -42,13 +41,13 @@ class NotebookExporter(object):
     self._write_readme()
     self._write_gitignore()
 
-  def process(self, filepaths):
+  def process(self, filepaths, nbformat_version):
     """
     Loads and exports notebook to a predetermined set of formats.
     """
-    for filepath in filepaths:
-      basename = get_file_id(filepath)
-      notebook = nbformat.read(filepath, as_version=self.nbformat_version)
+    for fp in filepaths:
+      basename = get_file_id(fp)
+      notebook = nbformat.read(fp, as_version=nbformat_version)
       self.export_python(basename, notebook)
       self.export_rst(basename, notebook)
       self.notebooks_processed += 1

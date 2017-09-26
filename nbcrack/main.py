@@ -5,7 +5,7 @@ from distutils import dir_util
 import logging
 from os import path as ospath
 
-from .command import cd_repo_root
+from .command import (cd_if_necessary, git_repo_root)
 from .const import PKG_NAME
 from .export import NotebookExporter
 from .fileops import normrelpath
@@ -14,9 +14,28 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
+def _get_args():
+  desc = 'Crack open ipython/jupyter notebooks for diffing purposes.'
+  parser = ArgumentParser(
+    description=desc)
+  parser.add_argument(
+    'files',
+    help='path(s) to ipython/jupyter notebooks',
+    nargs='+')
+  parser.add_argument(
+    '--output-dir',
+    help='output directory',
+    default='nbcrack_generated')
+  parser.add_argument(
+    '--nbformat-version',
+    default=4,
+    type=int)
+  return parser.parse_args()
+
 def _log_setup(log_dir):
   # standard log format
-  formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+  fmt = '%(asctime)s - %(levelname)s - %(message)s'
+  formatter = logging.Formatter(fmt)
 
   # output logging to file
   log_file = '{}.log'.format(PKG_NAME)
@@ -33,11 +52,8 @@ def _log_setup(log_dir):
 
 
 def main():
-  parser = ArgumentParser()
-  parser.add_argument('files', nargs='+')
-  parser.add_argument('--output-dir', default='nbcrack_generated')
-  parser.add_argument('--nbformat-version', default=4, type=int)
-  args = parser.parse_args()
+  # commandline args
+  args = _get_args()
 
   # convert input paths to absolute paths
   files = map(ospath.abspath, args.files)
@@ -48,17 +64,17 @@ def main():
   _log_setup(output_dir)
 
   # cd to the root of the git repo
-  with cd_repo_root() as repo_root:
+  repo_root = git_repo_root()
+  with cd_if_necessary(repo_root):
 
     # relativize absolute filepaths to root of repo
     output_dir = normrelpath(output_dir, repo_root)
-    files = [normrelpath(filepath, repo_root) for filepath in files]
+    files = [normrelpath(fp, repo_root) for fp in files]
 
-    exporter = NotebookExporter(output_dir, args.nbformat_version)
+    exporter = NotebookExporter(output_dir)
     exporter.setup()
-    exporter.process(files)
+    exporter.process(files, args.nbformat_version)
     exporter.teardown()
 
 if __name__ == '__main__':
   main()
-  print("foo()")
