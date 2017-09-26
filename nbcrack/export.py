@@ -67,26 +67,26 @@ class NotebookExporter(object):
     """
     Exports a pre-loaded notebook in python format.
     """
-    (content, resources) = self.python_exporter.from_notebook_node(self.notebook)
+    (content, resources) = self.python_exporter.from_notebook_node(notebook)
 
     # write python file
-    py_filename = self.basename + '.py'
+    py_filename = basename + '.py'
     write_file(self.output_dir, py_filename, content, write_mode='w')
 
   def export_rst(self, basename, notebook):
     """
     Exports a pre-loaded notebook in rst format.
     """
-    (content, resources) = self.rst_exporter.from_notebook_node(self.notebook)
+    (content, resources) = self.rst_exporter.from_notebook_node(notebook)
 
     # write rst file
-    rst_filename = self.basename + '.rst'
+    rst_filename = basename + '.rst'
     write_file(self.output_dir, rst_filename, content, write_mode='w')
 
     # write any additional resources
-    for (resource_filename, b64data) in resources['outputs']:
-      resource_filepath = get_file_id(self.basename + "__" + resource_filename)
-      write_file(self.output_dir, resource_filepath, b64data, write_mode='wb')
+    for (res_filename, b64data) in resources['outputs']:
+      res_filepath = get_file_id(self.basename + "__" + res_filename)
+      write_file(self.output_dir, res_filepath, b64data, write_mode='wb')
 
   def _write_readme(self):
     content = self.README_MESSAGE.format(

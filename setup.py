@@ -33,7 +33,8 @@ setup(
     version=find_version("nbcrack", "__init__.py"),
 
     description='ipython notebook diffing tool',
-    long_description=read_long_description(),
+    # TODO: "python setup.py egg_info" fails with error code 1 due to no readme
+    # long_description=read_long_description(),
 
     # project homepage
     url='https://github.com/lcary/nbcrack',
