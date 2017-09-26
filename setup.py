@@ -69,7 +69,7 @@ setup(
     include_package_data=True,
 
     # runtime dependencies
-    install_requires=['nbconvert', 'nbformat'],
+    install_requires=['nbconvert', 'nbformat', 'ipython'],
 
     # entry point to provide executable scripts
     entry_points={
