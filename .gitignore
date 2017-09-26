@@ -1,5 +1,5 @@
 build/
 dist/
-ipynb_diff.egg-info/
+nbexplode.egg-info/
 .DS_Store
 *.pyc

@@ -1,8 +1,8 @@
 {
   "files_converted": 1, 
   "output_dir": "example/ipynb_generated", 
-  "program": "ipynb_diff", 
-  "runtime_seconds": 1.323016, 
-  "time_finished": "2017-09-25 16:13:56.930833", 
-  "time_started": "2017-09-25 16:13:55.607817"
+  "program": "nbexplode", 
+  "runtime_seconds": 0.750051, 
+  "time_finished": "2017-09-26 15:17:49.296731", 
+  "time_started": "2017-09-26 15:17:48.546680"
 }

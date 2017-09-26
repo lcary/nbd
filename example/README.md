@@ -1,4 +1,4 @@
-ipynb_diff.py Tutorial
+nbexplode.py Tutorial
 ======================
 
 This is a far-too-simple example of using the tool to
@@ -11,12 +11,12 @@ Generating code
 
 Lets start by changing the working directory to the root directory of the repo, e.g.:
 ```
-$ cd ipynb_diff/
+$ cd nbexplode/
 ```
 
 Run as follows:
 ```
-$ ./ipynb_diff_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
+$ ./nbexplode_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
 ...
 finished: generated content for 1 ipynb file(s) in example/ipynb_generated/
 ```
@@ -50,7 +50,7 @@ perl -pi -e 's/english 1.20478510204 12.656038024/english nan nan/g' $filename
 
 Rerun the tool:
 ```
-$ ./ipynb_diff_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
+$ ./nbexplode_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
 ...
 finished: generated content for 1 ipynb file(s) in example/ipynb_generated/
 ```
@@ -80,7 +80,7 @@ Reverting changes
 We can show that removing the changes removes the differences:
 ```
 $ git checkout -- def_wikipedia_visualization.ipynb
-$ ./ipynb_diff_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
+$ ./nbexplode_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
 ...
 $ git status
 On branch master

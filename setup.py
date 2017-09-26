@@ -27,16 +27,16 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 setup(
-    name='ipynb_diff',
+    name='nbexplode',
 
     # Using https://packaging.python.org/en/latest/single_source_version.html
-    version=find_version("ipynb_diff", "__init__.py"),
+    version=find_version("nbexplode", "__init__.py"),
 
     description='ipython notebook diffing tool',
     long_description=read_long_description(),
 
     # project homepage
-    url='https://github.com/lcary/ipynb_diff',
+    url='https://github.com/lcary/nbexplode',
 
     author='Luc Cary',
     author_email='luc.cary@gmail.com',
@@ -60,18 +60,18 @@ setup(
     ],
 
     # what the project relates to
-    keywords='ipynb jupyter ipython diff git',
+    keywords='ipynb jupyter ipython nbconvert diff git',
 
     # use find_packages() to find the package
     packages=find_packages(exclude=['example']),
 
     # runtime dependencies
-    install_requires=['jupyter'],
+    install_requires=['nbconvert', 'nbformat'],
 
     # entry point to provide executable scripts
     entry_points={
         'console_scripts': [
-            'ipynb_diff=ipynb_diff.main:main',
+            'nbexplode=nbexplode.main:main',
         ],
     },
 )

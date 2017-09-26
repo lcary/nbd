@@ -7,24 +7,25 @@ from os import path as ospath
 
 from .command import cd_repo_root
 from .const import PKG_NAME
-from .converter import NotebookConverter
+from .explode import NotebookExploder
+from .fileops import normrelpath
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
 def _log_setup(log_dir):
-  # log setup
+  # standard log format
   formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
-  # output to file
+  # output logging to file
   log_file = '{}.log'.format(PKG_NAME)
   fh = logging.FileHandler(ospath.join(log_dir, log_file))
   fh.setLevel(logging.DEBUG)
   fh.setFormatter(formatter)
   logger.addHandler(fh)
 
-  # output to console
+  # output logging to console
   ch = logging.StreamHandler()
   ch.setLevel(logging.INFO)
   ch.setFormatter(formatter)
@@ -42,14 +43,21 @@ def main():
   files = map(ospath.abspath, args.files)
   output_dir = ospath.abspath(args.output_dir)
 
-  # create output dir for generated code
+  # create output dir and set as log dir
   dir_util.mkpath(output_dir)
-
   _log_setup(output_dir)
 
-  # cd to the root of the git repo and convert files
+  # cd to the root of the git repo
   with cd_repo_root() as repo_root:
-    NotebookConverter(output_dir, repo_root, args.nbformat_version).convert(files)
+
+    # relativize absolute filepaths to root of repo
+    output_dir = normrelpath(output_dir, repo_root)
+    files = [normrelpath(filepath, repo_root) for filepath in files]
+
+    exploder = NotebookExploder(output_dir, args.nbformat_version)
+    exploder.setup()
+    exploder.explode(files)
+    exploder.teardown()
 
 if __name__ == '__main__':
   main()

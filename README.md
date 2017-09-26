@@ -1,4 +1,4 @@
-ipynb_diff
+nbexplode
 ==========
 
 Generates code/files for each ipynb input script for human-readable diff viewing.
@@ -53,7 +53,7 @@ Install
 
 Once the sdist is built (see above), you can install it with pip:
 ```
-pip install dist/ipynb_diff-1.0.0.dev1.tar.gz
+pip install dist/nbexplode-1.0.0.dev1.tar.gz
 ```
 
 _NOTE_: If you have not already pip-installed nbconvert, running that command will install it for you.
@@ -63,12 +63,12 @@ Usage
 
 Run from root with:
 ```
-./ipynb_diff_cli
+./nbexplode_cli
 ```
 
 Help:
 ```
-$ ./ipynb_diff_cli -h
+$ ./nbexplode_cli -h
 usage: main.py [-h] [--output_dir OUTPUT_DIR] files [files ...]
 
 positional arguments:
@@ -81,7 +81,7 @@ optional arguments:
 
 Example usage:
 ```
-$ ./ipynb_diff_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
+$ ./nbexplode_cli --output_dir example/ipynb_generated ./example/def_wikipedia_visualization.ipynb
 ```
 
 See more in the `example/` directory.
