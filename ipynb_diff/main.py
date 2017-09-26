@@ -7,7 +7,7 @@ from os import path as ospath
 
 from .command import cd_repo_root
 from .const import PKG_NAME
-from .nbconvert import NotebookConverter
+from .converter import NotebookConverter
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -34,7 +34,8 @@ def _log_setup(log_dir):
 def main():
   parser = ArgumentParser()
   parser.add_argument('files', nargs='+')
-  parser.add_argument('--output_dir', default='ipynb_generated')
+  parser.add_argument('--output-dir', default='ipynb_generated')
+  parser.add_argument('--nbformat-version', default=4, type=int)
   args = parser.parse_args()
 
   # convert input paths to absolute paths
@@ -48,7 +49,8 @@ def main():
 
   # cd to the root of the git repo and convert files
   with cd_repo_root() as repo_root:
-    NotebookConverter(output_dir, repo_root).convert(files)
+    NotebookConverter(output_dir, repo_root, args.nbformat_version).convert(files)
 
 if __name__ == '__main__':
   main()
+  print("foo()")

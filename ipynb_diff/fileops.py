@@ -12,9 +12,9 @@ def normrelpath(path, root_dir):
   return ospath.normpath(ospath.relpath(path, start=root_dir))
 
 
-def get_file_id(filepath, root_dir):
+def get_file_id(filepath):
   """
-  Returns a unique identifier based on file path and directory.
+  Returns a unique identifier based on file path.
 
   Goals: Use unique keys, e.g. in cases where multiple directories
   contain files with the same names.
@@ -22,14 +22,14 @@ def get_file_id(filepath, root_dir):
   return filepath.replace(ospath.sep, "__")
 
 
-def write_file(dir_path, filename, content):
+def write_file(dir_path, filename, content, write_mode='w'):
   """
   Write content to a file with a given name in a given directory.
 
   Additionally, log the path where the content was written to.
   """
   abspath = ospath.abspath(ospath.join(dir_path, filename))
-  with open(abspath, 'w') as f:
+  with open(abspath, write_mode) as f:
     f.write(content)
   nbytes = ospath.getsize(abspath)
   logger.debug("wrote {} bytes to {}".format(nbytes, abspath))
