@@ -15,7 +15,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def _get_args():
-  desc = 'Crack open ipython/jupyter notebooks for diffing purposes.'
+  desc = 'The lightweight ipython notebook diffing tool'
   parser = ArgumentParser(
     description=desc)
   parser.add_argument(
@@ -24,8 +24,8 @@ def _get_args():
     nargs='+')
   parser.add_argument(
     '--output-dir',
-    help='output directory',
-    default='nbcrack_generated')
+    help='output directory for exported files',
+    default='nbd_generated')
   parser.add_argument(
     '--nbformat-version',
     default=4,

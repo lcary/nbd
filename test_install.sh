@@ -6,11 +6,11 @@ cd $(git rev-parse --show-toplevel)
 
 # clean
 rm -rf dist/ build/
-pip uninstall -y nbcrack || echo "Already uninstalled"
+pip uninstall -y nbd || echo "Already uninstalled"
 
 # build
 python setup.py sdist
 
-pip install ./dist/nbcrack-*.tar.gz
+pip install ./dist/nbd-*.tar.gz
 
-nbcrack example/def_wikipedia_visualization.ipynb
+nbd example/def_wikipedia_visualization.ipynb

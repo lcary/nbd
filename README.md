@@ -1,5 +1,5 @@
-nbcrack
-=======
+nbd
+===
 
 Turn ipython and jupyter notebooks into something that can be diffed by a human.
 
@@ -56,7 +56,7 @@ Install
 
 Once the sdist is built (see above), you can install it with pip. e.g.:
 ```
-pip install dist/nbcrack-1.0.0.dev1.tar.gz
+pip install dist/nbd-1.0.0.dev1.tar.gz
 ```
 
 _NOTE_: If you have not already pip-installed nbconvert, running that command will install it for you.
@@ -66,12 +66,12 @@ Usage
 
 Run from root with:
 ```
-nbcrack
+nbd
 ```
 
 Help:
 ```
-$ nbcrack -h
+$ nbd -h
 usage: main.py [-h] [--output_dir OUTPUT_DIR] files [files ...]
 
 positional arguments:
@@ -84,7 +84,7 @@ optional arguments:
 
 Example usage:
 ```
-$ nbcrack --output_dir example/nbcrack_generated ./example/def_wikipedia_visualization.ipynb
+$ nbd --output_dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
 ```
 
 See more in the `example/` directory.

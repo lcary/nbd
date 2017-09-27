@@ -27,17 +27,17 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 setup(
-    name='nbcrack',
+    name='nbd',
 
     # Using https://packaging.python.org/en/latest/single_source_version.html
-    version=find_version("nbcrack", "__init__.py"),
+    version=find_version("nbd", "__init__.py"),
 
-    description='ipython notebook diffing tool',
+    description='lightweight ipython notebook diffing tool',
     # TODO: "python setup.py egg_info" fails with error code 1 due to no readme
     # long_description=read_long_description(),
 
     # project homepage
-    url='https://github.com/lcary/nbcrack',
+    url='https://github.com/lcary/nbd',
 
     author='Luc Cary',
     author_email='luc.cary@gmail.com',
@@ -74,7 +74,7 @@ setup(
     # entry point to provide executable scripts
     entry_points={
         'console_scripts': [
-            'nbcrack=nbcrack.main:main',
+            'nbd=nbd.main:main',
         ],
     },
 
