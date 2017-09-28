@@ -48,11 +48,6 @@ running the above command will install it for you.
 Usage
 -----
 
-Run from root with:
-```
-nbd
-```
-
 Help:
 ```
 nbd -h
