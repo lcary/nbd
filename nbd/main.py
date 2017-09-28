@@ -32,6 +32,7 @@ def _get_args():
     type=int)
   return parser.parse_args()
 
+
 def _log_setup(log_dir):
   # standard log format
   fmt = '%(asctime)s - %(levelname)s - %(message)s'
