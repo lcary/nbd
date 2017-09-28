@@ -32,8 +32,8 @@ Displaying notebook changes
 Try changing the ipynb source file:
 ```
 [demo@nbd]$ filename=demo.ipynb
-[demo@nbd]$ perl -pi -e 's/from wand.image import Image as WImage/from wand.image import Image as OOPS/g' $filename
-[demo@nbd]$ perl -pi -e 's/english 1.20478510204 12.656038024/english nan nan/g' $filename
+[demo@nbd]$ perl -pi -e 's/Simple data to display in various forms/Fvzcyr qngn gb qvfcynl va inevbhf sbezf/g' $filename
+[demo@nbd]$ perl -pi -e 's/0.18896798  0.20471531  0.22046264  0.23620997  0.25195731  0.26770464/nan nan nan nan nan nan/g' $filename
 ```
 
 See our diff:
