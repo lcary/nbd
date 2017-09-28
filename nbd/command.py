@@ -13,15 +13,12 @@ def _color(msg, ansicode):
   return '\033[1;{ansicode};40m{msg}\033[0m'.format(msg=msg, ansicode=ansicode)
 
 
-def echo(subject, ansicode, msg, debug=False):
-  log = logger.info
-  if debug:
-    log = logger.debug
-  log('{}: {}'.format(_color(subject, ansicode), msg))
+def echo(subject, ansicode, msg):
+  logger.debug('{}: {}'.format(_color(subject, ansicode), msg))
 
 
 def _cd_with_echo(path):
-  echo('cd', ANSI_LIGHT_GREEN, path, debug=True)
+  echo('cd', ANSI_LIGHT_GREEN, path)
   chdir(path)
 
 
@@ -42,17 +39,17 @@ def cd_if_necessary(path):
 
 def git_repo_root():
   args = ['git', 'rev-parse', '--show-toplevel']
-  echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
+  echo('git', ANSI_LIGHT_RED, " ".join(args))
   return check_output(args).strip('\n')
 
 
 def git_show_old_copy(filepath, commit='HEAD^'):
   args = ['git', 'show', '{}:{}'.format(commit, filepath)]
-  echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
+  echo('git', ANSI_LIGHT_RED, " ".join(args))
   return check_output(args)
 
 
-def git_diff_no_index(file_a, file_b):
+def git_diff_no_index(file_a, file_b, options=None):
   args = [
     'git',
     '--no-pager',
@@ -60,7 +57,9 @@ def git_diff_no_index(file_a, file_b):
     '--exit-code',
     '--no-index',
     '--color=always',
-    file_a,
-    file_b]
-  echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
+    ]
+  if options is not None:
+    args.extend(options)
+  args.extend([file_a, file_b])
+  echo('git', ANSI_LIGHT_RED, " ".join(args))
   call(args)

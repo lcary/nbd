@@ -40,6 +40,11 @@ def _get_args():
     type=int)
   # TODO: allow user to configure which commits to diff against via argparse subparser
   # TODO: add options to configure export formats
+  parser.add_argument(
+    '-g',
+    '--git-diff-options',
+    help='additional options to pass to git-diff',
+    action='append')
   return parser.parse_args()
 
 
@@ -86,7 +91,7 @@ def main():
     # TODO: replace those fake shas!
     # export notebooks to various git-diff-friendly formats in tempdir
     diff_gen = DiffGenerator(nb_filepaths, "old_commit_sha", "new_commit_sha")
-    diff_gen.get_diff(args.nbformat_version)
+    diff_gen.get_diff(args.nbformat_version, args.git_diff_options)
 
 if __name__ == '__main__':
   main()

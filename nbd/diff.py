@@ -33,7 +33,7 @@ class DiffGenerator(object):
       exporter = NotebookExporter(new_dir)
       exporter.process_notebook(file_id, new_copy_filepath, nbformat_version)
 
-  def get_diff(self, nbformat_version):
+  def get_diff(self, nbformat_version, git_diff_options):
     with mktempdir() as tempdir:
       old_dir = ospath.join(tempdir, 'old')
       new_dir = ospath.join(tempdir, 'new')
@@ -44,4 +44,4 @@ class DiffGenerator(object):
       # show git diff of exported data within tempdir
       msg = "git diff output below (no output == no diff)"
       echo(PKG_NAME, ANSI_LIGHT_GREEN, msg)
-      git_diff_no_index(old_dir, new_dir)
+      git_diff_no_index(old_dir, new_dir, options=git_diff_options)

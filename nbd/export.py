@@ -51,6 +51,6 @@ class NotebookExporter(object):
     write_file(self.output_dir, rst_filename, content, write_mode='w')
 
     # write any additional resources
-    for (res_filename, b64data) in resources['outputs']:
-      res_filepath = get_file_id(self.basename + "__" + res_filename)
+    for (res_filename, b64data) in resources['outputs'].items():
+      res_filepath = get_file_id(basename + "__" + res_filename)
       write_file(self.output_dir, res_filepath, b64data, write_mode='wb')
