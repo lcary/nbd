@@ -65,4 +65,4 @@ Works with `less(1)` for big diffs:
 nbd massively_modified_notebook.ipynb | less
 ```
 
-See more in the `demo/` directory: [demo tutorial](TUTORIAL.md).
+See more in the `demo/` directory: [demo tutorial](demo/TUTORIAL.md).
