@@ -48,6 +48,7 @@ def _get_args():
   parser.add_argument(
     '-e',
     '--export-formats',
+    dest='export_formats',
     action='append',
     choices=NotebookExporter.DEFAULT_EXPORT_FORMATS,
     help='only export specific formats. omit to export all formats.')
@@ -61,7 +62,8 @@ def _get_args():
     help='newer commit hash to diff against')
   parser.add_argument(
     '-g',
-    '--git-diff-options',
+    '--git-diff-option',
+    dest='git_diff_options',
     action='append',
     help='additional options to pass to git-diff')
   return parser.parse_args()
