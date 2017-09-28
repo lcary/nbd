@@ -1,15 +1,17 @@
 from distutils import dir_util
 from os import path as ospath
 
-from .command import (git_diff_no_index, git_show_old_copy)
+from .command import (ANSI_LIGHT_GREEN, echo, git_diff_no_index, git_show_old_copy)
+from .const import PKG_NAME
 from .export import NotebookExporter
 from .fileops import (get_file_id, mktempdir, write_file)
 
 
 class DiffGenerator(object):
 
-  def __init__(self, filepaths, old_commit_sha, new_commit_sha):
-    self.filepaths = filepaths
+  def __init__(self, notebook_filepaths, old_commit_sha, new_commit_sha):
+    self.notebook_filepaths = notebook_filepaths
+    # use these at some point
     self.old_commit_sha = old_commit_sha
     self.new_commit_sha = new_commit_sha
 
@@ -20,7 +22,7 @@ class DiffGenerator(object):
     return ospath.join(output_dir, filename)
 
   def _export_old_and_new_notebooks(self, tempdir, old_dir, new_dir, nbformat_version):
-    for new_copy_filepath in self.filepaths:
+    for new_copy_filepath in self.notebook_filepaths:
       file_id = get_file_id(new_copy_filepath)
       # get previous copy of notebook from git history, output to tempdir
       old_copy_filepath = self._write_old_copy(new_copy_filepath, tempdir)
@@ -40,4 +42,6 @@ class DiffGenerator(object):
       # # export data from notebooks in git repo and notebooks in tempdir
       self._export_old_and_new_notebooks(tempdir, old_dir, new_dir, nbformat_version)
       # show git diff of exported data within tempdir
+      msg = "git diff output below (no output == no diff)"
+      echo(PKG_NAME, ANSI_LIGHT_GREEN, msg)
       git_diff_no_index(old_dir, new_dir)
