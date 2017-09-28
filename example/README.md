@@ -13,12 +13,12 @@ Generating code
 
 Lets start by changing the working directory to the root directory of the repo, e.g.:
 ```
-$ cd nbd/
+$ cd ~/workspace/nbd/
 ```
 
 Run as follows:
 ```
-$ nbd --output_dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
+$ nbd -e --output-dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
 ...
 finished: generated content for 1 ipynb file(s) in example/nbd_generated/
 ```
@@ -52,7 +52,7 @@ perl -pi -e 's/english 1.20478510204 12.656038024/english nan nan/g' $filename
 
 Rerun the tool:
 ```
-$ nbd --output_dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
+$ nbd -e --output-dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
 ...
 finished: generated content for 1 ipynb file(s) in example/nbd_generated/
 ```
@@ -82,7 +82,7 @@ Reverting changes
 We can show that removing the changes removes the differences:
 ```
 $ git checkout -- def_wikipedia_visualization.ipynb
-$ nbd --output_dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
+$ nbd -e --output-dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
 ...
 $ git status
 On branch master

@@ -15,7 +15,7 @@ The generated code and files are the body and resources of an ipython notebook,
 as converted with `nbconvert`. This tool wraps `nbconvert` in order to provide
 higher-level functionality.
 
-This tool is designed to be used in one of two ways: for diff changes to a
+This tool is designed to be used in one of two ways: for diffing changes to a
 notebook on demand, or to install as a git commit hook and allow diffing the
 files themselves.
 
@@ -71,20 +71,17 @@ nbd
 
 Help:
 ```
-$ nbd -h
-usage: main.py [-h] [--output_dir OUTPUT_DIR] files [files ...]
-
-positional arguments:
-  files
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --output_dir OUTPUT_DIR
+nbd -h
 ```
 
 Example usage:
 ```
-$ nbd --output_dir example/nbd_generated ./example/def_wikipedia_visualization.ipynb
+nbd modified_notebook.ipynb
+```
+
+Works OK with `less(1)` for big honkin' diffs:
+```
+nbd massively_modified_notebook.ipynb | less
 ```
 
 See more in the `example/` directory.
