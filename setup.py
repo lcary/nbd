@@ -64,7 +64,7 @@ setup(
     keywords='ipynb jupyter ipython nbconvert diff git',
 
     # use find_packages() to find the package
-    packages=find_packages(exclude=['example']),
+    packages=find_packages(exclude=['demo']),
     package_data={'': ['README.md']},
     include_package_data=True,
 

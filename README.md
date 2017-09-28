@@ -7,16 +7,18 @@ Purpose
 -------
 
 To turn ipython/jupyter notebooks into something that can be diffed
-by a human. No diff/merge GUI, nothing fancy here. This tool merely
-exports data from the notebook into a temporary directory in order
-to run a `--no-index` git diff, which can be read by the user, or
-piped to `less(1)`, or written to a file.
+by a human. No diff or merge GUI, nothing fancy here. This tool just
+exports data from the notebook to git diff, which can be read by the
+user, or piped to `less(1)`, or written to a file.
 
-Exported Data
--------------
+Export data
+-----------
 
-* Python Format
-* RST Format
+Running `ndb` exports the following data from a notebook:
+
+* Python Format (the `In`s)
+* RST Format (the `Out`s)
+* Resources (e.g. PNGs)
 
 Requirements
 ------------
@@ -58,9 +60,9 @@ Example usage:
 nbd modified_notebook.ipynb
 ```
 
-Works OK with `less(1)` for big honkin' diffs:
+Works with `less(1)` for big diffs:
 ```
 nbd massively_modified_notebook.ipynb | less
 ```
 
-See more in the `example/` directory.
+See more in the `demo/` directory.
