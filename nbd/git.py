@@ -5,9 +5,7 @@ from .command import (ANSI_LIGHT_RED, echo)
 
 class Git(object):
   """
-  Namespace for git functions. Use like:
-
-      import Git; Git.diff(a, b)
+  Namespace for git functions.
   """
 
   @staticmethod
