@@ -41,15 +41,18 @@ class NotebookExporter(object):
     self._write_readme()
     self._write_gitignore()
 
-  def process(self, filepaths, nbformat_version):
+  def process_notebook(self, basename, filepath, nbformat_version):
+    notebook = nbformat.read(filepath, as_version=nbformat_version)
+    self.export_python(basename, notebook)
+    self.export_rst_files(basename, notebook)
+
+  def process_notebooks(self, filepaths, nbformat_version):
     """
     Loads and exports notebook to a predetermined set of formats.
     """
     for fp in filepaths:
       basename = get_file_id(fp)
-      notebook = nbformat.read(fp, as_version=nbformat_version)
-      self.export_python(basename, notebook)
-      self.export_rst(basename, notebook)
+      self.process_notebook(basename, fp, nbformat_version)
       self.notebooks_processed += 1
 
   def teardown(self):
@@ -72,7 +75,7 @@ class NotebookExporter(object):
     py_filename = basename + '.py'
     write_file(self.output_dir, py_filename, content, write_mode='w')
 
-  def export_rst(self, basename, notebook):
+  def export_rst_files(self, basename, notebook):
     """
     Exports a pre-loaded notebook in rst format.
     """

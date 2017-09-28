@@ -1,6 +1,8 @@
+from contextlib import contextmanager
 from os import path as ospath
-
 import logging
+import tempfile
+import shutil
 
 logger = logging.getLogger()
 
@@ -33,3 +35,12 @@ def write_file(dir_path, filename, content, write_mode='w'):
     f.write(content)
   nbytes = ospath.getsize(abspath)
   logger.debug("wrote {} bytes to {}".format(nbytes, abspath))
+
+
+@contextmanager
+def mktempdir():
+  name = tempfile.mkdtemp()
+  try:
+    yield name
+  finally:
+    shutil.rmtree(name)

@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import logging
 from os import (chdir, getcwd)
-from subprocess import check_output
+from subprocess import (call, check_output)
 
 logger = logging.getLogger()
 
@@ -40,3 +40,13 @@ def git_repo_root():
   args = ['git', 'rev-parse', '--show-toplevel']
   echo("running", ANSI_LIGHT_RED, " ".join(args))
   return check_output(args).strip('\n')
+
+def git_show_old_copy(filepath, commit='HEAD^'):
+  args = ['git', 'show', '{}:{}'.format(commit, filepath)]
+  echo("running", ANSI_LIGHT_RED, " ".join(args))
+  return check_output(args)
+
+def git_diff_no_index(file_a, file_b):
+  args = ['git', '--no-pager', 'diff', '--exit-code', '--no-index', file_a, file_b]
+  echo("running", ANSI_LIGHT_RED, " ".join(args))
+  call(args)

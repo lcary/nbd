@@ -7,6 +7,7 @@ from os import path as ospath
 
 from .command import (cd_if_necessary, git_repo_root)
 from .const import PKG_NAME
+from .diff import DiffGenerator
 from .export import NotebookExporter
 from .fileops import normrelpath
 
@@ -22,14 +23,25 @@ def _get_args():
     'files',
     help='path(s) to ipython/jupyter notebooks',
     nargs='+')
+  # change output dir if -d mode.
   parser.add_argument(
+    '-o',
     '--output-dir',
     help='output directory for exported files',
     default='nbd_generated')
   parser.add_argument(
+    '-f',
     '--nbformat-version',
     default=4,
     type=int)
+  # TODO: make this a subparser
+  parser.add_argument(
+    '-d',
+    '--diff-only',
+    help='generate no files, simply diff the notebook',
+    action='store_true')
+  # TODO: allow user to configure which commits to diff against
+  # TODO: add options to configure export formats
   return parser.parse_args()
 
 
@@ -72,10 +84,16 @@ def main():
     output_dir = normrelpath(output_dir, repo_root)
     files = [normrelpath(fp, repo_root) for fp in files]
 
-    exporter = NotebookExporter(output_dir)
-    exporter.setup()
-    exporter.process(files, args.nbformat_version)
-    exporter.teardown()
+    if args.diff_only:
+      # export notebooks to various git-diff-friendly formats in tempdir
+      diff_gen = DiffGenerator(files, "old_commit_sha", "new_commit_sha")
+      diff_gen.get_diff(args.nbformat_version)
+    else:
+      # export notebooks to various git-diff-friendly formats in repo
+      exporter = NotebookExporter(output_dir)
+      exporter.setup()
+      exporter.process_notebooks(files, args.nbformat_version)
+      exporter.teardown()
 
 if __name__ == '__main__':
   main()
