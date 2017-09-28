@@ -8,7 +8,6 @@ from os import path as ospath
 from .command import (cd_if_necessary, git_repo_root)
 from .const import PKG_NAME
 from .diff import DiffGenerator
-from .export import NotebookExporter
 from .fileops import normrelpath
 
 logger = logging.getLogger()
@@ -36,11 +35,6 @@ def _get_args():
     help='ipython/jupyter notebook format version',
     default=4,
     type=int)
-  parser.add_argument(
-    '-e',
-    '--export-to-repo',
-    help='export data from notebooks into the output directory',
-    action='store_true')
   # TODO: allow user to configure which commits to diff against via argparse subparser
   # TODO: add options to configure export formats
   # TODO: make disk logging optional, with log_dir set by user
@@ -87,16 +81,10 @@ def main():
     output_dir = normrelpath(output_dir, repo_root)
     nb_filepaths = [normrelpath(fp, repo_root) for fp in nb_filepaths]
 
-    if args.export_to_repo:
-      # export notebooks to various git-diff-friendly formats in repo
-      exporter = NotebookExporter(output_dir)
-      exporter.setup()
-      exporter.process_notebooks(nb_filepaths, args.nbformat_version)
-      exporter.teardown()
-    else:
-      # export notebooks to various git-diff-friendly formats in tempdir
-      diff_gen = DiffGenerator(nb_filepaths, "old_commit_sha", "new_commit_sha")
-      diff_gen.get_diff(args.nbformat_version)
+    # TODO: replace those fake shas!
+    # export notebooks to various git-diff-friendly formats in tempdir
+    diff_gen = DiffGenerator(nb_filepaths, "old_commit_sha", "new_commit_sha")
+    diff_gen.get_diff(args.nbformat_version)
 
 if __name__ == '__main__':
   main()
