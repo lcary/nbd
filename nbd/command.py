@@ -13,8 +13,11 @@ def _color(msg, ansicode):
   return '\033[1;{ansicode};40m{msg}\033[0m'.format(msg=msg, ansicode=ansicode)
 
 
-def echo(subject, ansicode, msg):
-  logger.info('{}: {}'.format(_color(subject, ansicode), msg))
+def echo(subject, ansicode, msg, debug=False):
+  log = logger.info
+  if debug:
+    log = logger.debug
+  log('{}: {}'.format(_color(subject, ansicode), msg))
 
 
 def _cd_with_echo(path):
@@ -36,17 +39,20 @@ def cd_if_necessary(path):
     else:
       pass
 
+
 def git_repo_root():
   args = ['git', 'rev-parse', '--show-toplevel']
-  echo("running", ANSI_LIGHT_RED, " ".join(args))
+  echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
   return check_output(args).strip('\n')
+
 
 def git_show_old_copy(filepath, commit='HEAD^'):
   args = ['git', 'show', '{}:{}'.format(commit, filepath)]
-  echo("running", ANSI_LIGHT_RED, " ".join(args))
+  echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
   return check_output(args)
+
 
 def git_diff_no_index(file_a, file_b):
   args = ['git', '--no-pager', 'diff', '--exit-code', '--no-index', file_a, file_b]
-  echo("running", ANSI_LIGHT_RED, " ".join(args))
+  echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
   call(args)
