@@ -47,7 +47,7 @@ def _get_args():
     help='ipython/jupyter notebook format version')
   parser.add_argument(
     '-e',
-    '--export-formats',
+    '--export-format',
     dest='export_formats',
     action='append',
     choices=NotebookExporter.DEFAULT_EXPORT_FORMATS,

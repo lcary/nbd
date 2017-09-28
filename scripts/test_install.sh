@@ -14,4 +14,4 @@ pip uninstall -y nbd || echo "Already uninstalled"
 python setup.py bdist
 python setup.py sdist
 
-pip install ./dist/nbd-*.tar.gz
+pip install ./dist/nbd-0.1.dev2.tar.gz
