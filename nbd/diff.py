@@ -10,29 +10,40 @@ from .git import Git
 
 class DiffGenerator(object):
 
-  def __init__(self, notebook_filepaths, old_commit_sha, new_commit_sha):
-    self.notebook_filepaths = notebook_filepaths
+  def __init__(self, filepaths, old_commit, new_commit, export_formats):
+    self.filepaths = filepaths
     # use these at some point
-    self.old_commit_sha = old_commit_sha
-    self.new_commit_sha = new_commit_sha
+    self.old_commit = old_commit
+    self.new_commit = new_commit
+    self.export_formats = export_formats
 
-  def _write_old_copy(self, filepath, output_dir):
-    content = Git.show_old_copy(filepath)
+  def _write_previous_version(self, filepath, output_dir, commit):
+    """
+    Write a committed version of a file to a given output directory.
+    """
+    content = Git.show(filepath, commit=commit)
     filename = ospath.basename(filepath)
     write_file(output_dir, filename, content)
     return ospath.join(output_dir, filename)
 
   def _export_old_and_new_notebooks(self, tempdir, old_dir, new_dir, nbformat_version):
-    for new_copy_filepath in self.notebook_filepaths:
-      file_id = get_file_id(new_copy_filepath)
-      # get previous copy of notebook from git history, output to tempdir
-      old_copy_filepath = self._write_old_copy(new_copy_filepath, tempdir)
-      # export data from old notebooks in tempdir
-      exporter = NotebookExporter(old_dir)
-      exporter.process_notebook(file_id, old_copy_filepath, nbformat_version)
-      # export data from new notebooks in git repo
-      exporter = NotebookExporter(new_dir)
-      exporter.process_notebook(file_id, new_copy_filepath, nbformat_version)
+    for filepath in self.filepaths:
+      file_id = get_file_id(filepath)
+
+      # get previous version of notebook from git history, output to tempdir
+      old_filepath = self._write_previous_version(filepath, tempdir, self.old_commit)
+
+      # get new version from git history if and only if a different commit
+      # is requested. otherwise, get it directly from the filepath in repo.
+      if self.new_commit is None:
+        new_filepath = filepath
+      else:
+        new_filepath = self._write_previous_version(filepath, tempdir, self.new_commit)
+
+      exporter = NotebookExporter(old_dir, self.export_formats)
+      exporter.process_notebook(file_id, old_filepath, nbformat_version)
+      exporter = NotebookExporter(new_dir, self.export_formats)
+      exporter.process_notebook(file_id, new_filepath, nbformat_version)
 
   def get_diff(self, nbformat_version, git_diff_options):
     with mktempdir() as tempdir:

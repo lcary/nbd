@@ -2,6 +2,7 @@ from subprocess import (call, check_output)
 
 from .command import (ANSI_LIGHT_RED, echo)
 
+HEAD = 'HEAD'
 
 class Git(object):
   """
@@ -15,7 +16,7 @@ class Git(object):
     return check_output(args).strip('\n')
 
   @staticmethod
-  def show_old_copy(filepath, commit='HEAD'):
+  def show(filepath, commit=HEAD):
     args = ['git', 'show', '{}:{}'.format(commit, filepath)]
     echo('git', ANSI_LIGHT_RED, " ".join(args))
     return check_output(args)

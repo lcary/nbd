@@ -3,26 +3,38 @@ from nbconvert import (PythonExporter, RSTExporter)
 
 from .fileops import (get_file_id, write_file)
 
+EXPORT_FORMAT_PYTHON = 'python'
+EXPORT_FORMAT_RST = 'rst'
+
 
 class NotebookExporter(object):
   """
   Process a list of notebooks by creating a directory and exporting
   notebooks to the specified formats (python, rst, and binary files)
   """
-  RUNTIME_DATA_FILENAME = 'data.json'
+  DEFAULT_EXPORT_FORMATS = (EXPORT_FORMAT_PYTHON, EXPORT_FORMAT_RST)
 
-  def __init__(self, output_dir):
+  def __init__(self, output_dir, export_formats=None):
     self.output_dir = output_dir
-    self.python_exporter = PythonExporter()
-    self.rst_exporter = RSTExporter()
+    self._export_formats = self._get_export_formats(export_formats)
+    self._python_exporter = PythonExporter()
+    self._rst_exporter = RSTExporter()
+
+  def _get_export_formats(self, export_formats):
+    if export_formats is None:
+      return list(self.DEFAULT_EXPORT_FORMATS)
+    else:
+      return export_formats
 
   def process_notebook(self, basename, filepath, nbformat_version):
     """
     Reads a notebook of a given format, then exports data.
     """
     notebook_node = nbformat.read(filepath, as_version=nbformat_version)
-    self.export_python(basename, notebook_node)
-    self.export_rst_files(basename, notebook_node)
+    if EXPORT_FORMAT_PYTHON in self._export_formats:
+      self.export_python(basename, notebook_node)
+    if EXPORT_FORMAT_RST in self._export_formats:
+      self.export_rst_files(basename, notebook_node)
 
   def process_notebooks(self, notebook_filepaths, nbformat_version):
     """
@@ -36,7 +48,7 @@ class NotebookExporter(object):
     """
     Exports notebook data in python format.
     """
-    (content, resources) = self.python_exporter.from_notebook_node(notebook_node)
+    (content, resources) = self._python_exporter.from_notebook_node(notebook_node)
 
     # write python file
     py_filename = basename + '.py'
@@ -46,7 +58,7 @@ class NotebookExporter(object):
     """
     Exports notebook data in rst format.
     """
-    (content, resources) = self.rst_exporter.from_notebook_node(notebook_node)
+    (content, resources) = self._rst_exporter.from_notebook_node(notebook_node)
 
     # write rst file
     rst_filename = basename + '.rst'
