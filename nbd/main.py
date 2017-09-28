@@ -1,7 +1,6 @@
 #!/bin/python
 
 from argparse import (ArgumentParser, ArgumentDefaultsHelpFormatter)
-from distutils import dir_util
 import logging
 from os import path as ospath
 
@@ -15,7 +14,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def _get_args():
-  desc = 'The lightweight ipython notebook diffing tool.'
+  desc = 'The lightweight ipython notebook diffing tool'
   parser = ArgumentParser(
     description=desc,
     formatter_class=ArgumentDefaultsHelpFormatter)
@@ -23,12 +22,16 @@ def _get_args():
     'notebooks',
     help='filepath(s) to ipython/jupyter notebooks',
     nargs='+')
-  # change output dir if -d mode. doesn't make sense now.
   parser.add_argument(
-    '-o',
-    '--output-dir',
-    help='output directory for exported files',
-    default='nbd_generated')
+    '-d',
+    '--debug',
+    help='display all log messages for debugging purposes',
+    action='store_true')
+  parser.add_argument(
+    '-l',
+    '--log-to-disk',
+    help='output {} logs to filesystem'.format(PKG_NAME),
+    action='store_true')
   parser.add_argument(
     '-f',
     '--nbformat-version',
@@ -42,21 +45,27 @@ def _get_args():
   return parser.parse_args()
 
 
-def _log_setup(log_dir):
+def _log_setup(debug, log_to_disk):
   # standard log format
   fmt = '%(asctime)s - %(levelname)s - %(message)s'
   formatter = logging.Formatter(fmt)
 
-  # output logging to file
-  log_file = '{}.log'.format(PKG_NAME)
-  fh = logging.FileHandler(ospath.join(log_dir, log_file))
-  fh.setLevel(logging.DEBUG)
-  fh.setFormatter(formatter)
-  logger.addHandler(fh)
+  if debug:
+    level = logging.DEBUG 
+  else:
+    level = logging.INFO
+
+  if log_to_disk:
+    # output logging to file
+    log_file = '{}.log'.format(PKG_NAME)
+    fh = logging.FileHandler(log_file)
+    fh.setLevel(level)
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
 
   # output logging to console
   ch = logging.StreamHandler()
-  ch.setLevel(logging.INFO)
+  ch.setLevel(level)
   ch.setFormatter(formatter)
   logger.addHandler(ch)
 
@@ -64,21 +73,16 @@ def _log_setup(log_dir):
 def main():
   # commandline args
   args = _get_args()
+  _log_setup(args.debug, args.log_to_disk)
 
   # convert input paths to absolute paths
   nb_filepaths = map(ospath.abspath, args.notebooks)
-  output_dir = ospath.abspath(args.output_dir)
-
-  # create output dir and set as log dir
-  dir_util.mkpath(output_dir)
-  _log_setup(output_dir)
 
   # cd to the root of the git repo
   repo_root = git_repo_root()
   with cd_if_necessary(repo_root):
 
     # relativize absolute filepaths to root of repo
-    output_dir = normrelpath(output_dir, repo_root)
     nb_filepaths = [normrelpath(fp, repo_root) for fp in nb_filepaths]
 
     # TODO: replace those fake shas!
