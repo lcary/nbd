@@ -28,6 +28,24 @@ Requirements
 * pandoc
 * git
 
+Usage
+-----
+
+Help:
+```
+nbd -h
+```
+
+Example usage:
+```
+nbd modified_notebook.ipynb
+```
+
+Works with `less(1)` for big diffs:
+```
+nbd massively_modified_notebook.ipynb | less
+```
+
 Build
 -----
 
@@ -47,22 +65,7 @@ pip install dist/nbd-1.0.0.dev1.tar.gz
 _NOTE_: If you have not already pip-installed `nbconvert`,
 running the above command will install it for you.
 
-Usage
------
+Tutorial
+--------
 
-Help:
-```
-nbd -h
-```
-
-Example usage:
-```
-nbd modified_notebook.ipynb
-```
-
-Works with `less(1)` for big diffs:
-```
-nbd massively_modified_notebook.ipynb | less
-```
-
-See more in the `demo/` directory: [demo tutorial](demo/TUTORIAL.md).
+See the tutorial in the `demo/` directory: [demo tutorial](demo/TUTORIAL.md).
