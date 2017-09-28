@@ -28,8 +28,7 @@ setup(
     # Using https://packaging.python.org/en/latest/single_source_version.html
     version=find_version("nbd", "__init__.py"),
 
-    description='lightweight ipython notebook diffing tool',
-    # TODO: "python setup.py egg_info" fails with error code 1 due to no readme
+    description='Lightweight ipython/jupyter notebook diffing tool',
     long_description=read('README.rst'),
 
     # project homepage
@@ -40,6 +39,7 @@ setup(
     author_email='luc.cary@gmail.com',
     license='MIT',
 
+    # TODO: support python3
     # Reference: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # maturity
@@ -58,7 +58,7 @@ setup(
     ],
 
     # what the project relates to
-    keywords='ipynb jupyter ipython nbconvert diff git',
+    keywords='ipynb jupyter ipython nbconvert git diff git-diff difftool',
 
     # use find_packages() to find the package
     packages=find_packages(exclude=['demo']),
