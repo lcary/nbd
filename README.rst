@@ -1,24 +1,31 @@
 nbd
 ===
 
-The lightweight ipython notebook diffing tool
+A lightweight ipython/jupyter notebook diffing tool.
 
 Purpose
 -------
 
-To turn ipython/jupyter notebooks into something that can be diffed by a
-human. No diff or merge GUI, nothing fancy here. This tool just exports
-data from the notebook to git diff, which can be read by the user, or
-piped to ``less(1)``, or written to a file.
+This tool makes ipython/jupyter notebook diffs more readable.
 
-Export data
------------
+This tool is meant for text-based diffing from the command-line.
 
-Running ``ndb`` exports the following data from a notebook:
+Overview
+--------
 
--  Python Format (the ``In``\ s)
--  RST Format (the ``Out``\ s)
--  Resources (e.g. PNGs)
+Running ``ndb`` shows differences in the following types of data:
+
+-  Python code
+-  reStructuredText code
+-  Resource files (e.g. PNGs)
+
+This will show you most of what has changed in the ``In[1]:`` and
+``Out[1]:`` lines of the notebook.
+
+The output of ``ndb`` is
+`git-diff <https://git-scm.com/docs/git-diff>`__ output and can be piped
+to other commands like `less(1) <https://linux.die.net/man/1/less>`__
+and `tee(1) <https://linux.die.net/man/1/tee>`__.
 
 Requirements
 ------------
@@ -27,6 +34,15 @@ Requirements
 -  nbconvert
 -  pandoc
 -  git
+
+Install
+-------
+
+Install with pip (or your favorite python package manager):
+
+::
+
+    pip install nbd
 
 Usage
 -----
@@ -37,20 +53,28 @@ Help:
 
     nbd -h
 
-Example usage:
+Simple usage:
 
 ::
 
-    nbd modified_notebook.ipynb
+    nbd <notebook>
 
-Works with ``less(1)`` for big diffs:
+Pipe to `less(1) <https://linux.die.net/man/1/less>`__:
 
 ::
 
-    nbd massively_modified_notebook.ipynb | less
+    nbd <notebook> | less
 
-Build
------
+Options (see help for all):
+
+::
+
+    nbd -e python <notebook>
+    nbd <notebook1> <notebook2> <notebook3>
+    nbd <notebook> --git-diff-option="--name-only"
+
+Build and install from sources
+------------------------------
 
 Source distribution:
 
@@ -58,20 +82,20 @@ Source distribution:
 
     python setup.py sdist
 
-Install
--------
-
-Build first, then install with pip:
+After building, install with pip:
 
 ::
 
-    pip install dist/nbd-1.0.0.dev1.tar.gz
+    pip install dist/nbd-$version.tar.gz
 
-*NOTE*: If you have not already pip-installed ``nbconvert``, running the
-above command will install it for you.
+Install in a virtual environment to avoid system pip issues.
 
 Tutorial
 --------
 
 See the tutorial in the ``demo/`` directory: `demo
 tutorial <demo/TUTORIAL.md>`__.
+
+.. raw:: html
+
+   <!-- links: -->
