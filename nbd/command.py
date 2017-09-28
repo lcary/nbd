@@ -21,7 +21,7 @@ def echo(subject, ansicode, msg, debug=False):
 
 
 def _cd_with_echo(path):
-  echo('cd', ANSI_LIGHT_GREEN, path)
+  echo('cd', ANSI_LIGHT_GREEN, path, debug=True)
   chdir(path)
 
 
