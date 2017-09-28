@@ -14,4 +14,6 @@ pip uninstall -y nbd || echo "Already uninstalled"
 python setup.py bdist
 python setup.py sdist
 
-pip install ./dist/nbd-0.1.dev2.tar.gz
+# TODO: automatically parse __version__ like setup.py, this is a PITA.
+#       this todo likely requires converting this to a python script.
+pip install ./dist/nbd-0.1.dev3.tar.gz
