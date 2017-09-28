@@ -40,8 +40,6 @@ def _get_args():
     type=int)
   # TODO: allow user to configure which commits to diff against via argparse subparser
   # TODO: add options to configure export formats
-  # TODO: make disk logging optional, with log_dir set by user
-  # TODO: allow user to set set log level
   return parser.parse_args()
 
 
