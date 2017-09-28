@@ -13,4 +13,4 @@ python setup.py sdist
 
 pip install ./dist/nbd-*.tar.gz
 
-nbd example/def_wikipedia_visualization.ipynb
+nbd demo/demo.ipynb
