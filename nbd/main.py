@@ -1,6 +1,6 @@
 #!/bin/python
 
-from argparse import ArgumentParser
+from argparse import (ArgumentParser, ArgumentDefaultsHelpFormatter)
 from distutils import dir_util
 import logging
 from os import path as ospath
@@ -16,14 +16,15 @@ logger.setLevel(logging.DEBUG)
 
 
 def _get_args():
-  desc = 'The lightweight ipython notebook diffing tool'
+  desc = 'The lightweight ipython notebook diffing tool.'
   parser = ArgumentParser(
-    description=desc)
+    description=desc,
+    formatter_class=ArgumentDefaultsHelpFormatter)
   parser.add_argument(
-    'files',
-    help='path(s) to ipython/jupyter notebooks',
+    'notebooks',
+    help='filepath(s) to ipython/jupyter notebooks',
     nargs='+')
-  # change output dir if -d mode.
+  # change output dir if -d mode. doesn't make sense now.
   parser.add_argument(
     '-o',
     '--output-dir',
@@ -32,16 +33,18 @@ def _get_args():
   parser.add_argument(
     '-f',
     '--nbformat-version',
+    help='ipython/jupyter notebook format version',
     default=4,
     type=int)
-  # TODO: make this a subparser
   parser.add_argument(
-    '-d',
-    '--diff-only',
-    help='generate no files, simply diff the notebook',
+    '-e',
+    '--export-to-repo',
+    help='export data from notebooks into the output directory',
     action='store_true')
-  # TODO: allow user to configure which commits to diff against
+  # TODO: allow user to configure which commits to diff against via argparse subparser
   # TODO: add options to configure export formats
+  # TODO: make disk logging optional, with log_dir set by user
+  # TODO: allow user to set set log level
   return parser.parse_args()
 
 
@@ -69,7 +72,7 @@ def main():
   args = _get_args()
 
   # convert input paths to absolute paths
-  files = map(ospath.abspath, args.files)
+  nb_filepaths = map(ospath.abspath, args.notebooks)
   output_dir = ospath.abspath(args.output_dir)
 
   # create output dir and set as log dir
@@ -82,18 +85,18 @@ def main():
 
     # relativize absolute filepaths to root of repo
     output_dir = normrelpath(output_dir, repo_root)
-    files = [normrelpath(fp, repo_root) for fp in files]
+    nb_filepaths = [normrelpath(fp, repo_root) for fp in nb_filepaths]
 
-    if args.diff_only:
-      # export notebooks to various git-diff-friendly formats in tempdir
-      diff_gen = DiffGenerator(files, "old_commit_sha", "new_commit_sha")
-      diff_gen.get_diff(args.nbformat_version)
-    else:
+    if args.export_to_repo:
       # export notebooks to various git-diff-friendly formats in repo
       exporter = NotebookExporter(output_dir)
       exporter.setup()
-      exporter.process_notebooks(files, args.nbformat_version)
+      exporter.process_notebooks(nb_filepaths, args.nbformat_version)
       exporter.teardown()
+    else:
+      # export notebooks to various git-diff-friendly formats in tempdir
+      diff_gen = DiffGenerator(nb_filepaths, "old_commit_sha", "new_commit_sha")
+      diff_gen.get_diff(args.nbformat_version)
 
 if __name__ == '__main__':
   main()

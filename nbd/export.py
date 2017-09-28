@@ -42,15 +42,15 @@ class NotebookExporter(object):
     self._write_gitignore()
 
   def process_notebook(self, basename, filepath, nbformat_version):
-    notebook = nbformat.read(filepath, as_version=nbformat_version)
-    self.export_python(basename, notebook)
-    self.export_rst_files(basename, notebook)
+    notebook_node = nbformat.read(filepath, as_version=nbformat_version)
+    self.export_python(basename, notebook_node)
+    self.export_rst_files(basename, notebook_node)
 
-  def process_notebooks(self, filepaths, nbformat_version):
+  def process_notebooks(self, notebook_filepaths, nbformat_version):
     """
     Loads and exports notebook to a predetermined set of formats.
     """
-    for fp in filepaths:
+    for fp in notebook_filepaths:
       basename = get_file_id(fp)
       self.process_notebook(basename, fp, nbformat_version)
       self.notebooks_processed += 1
@@ -61,25 +61,25 @@ class NotebookExporter(object):
     and write data about its execution to the output directory.
     """
     self._write_runtime_data(datetime.now())
-    msg = "generated content for {} ipynb file(s) in {}/".format(
+    msg = "exported data for {} ipynb file(s) to {}/".format(
       self.notebooks_processed, self.output_dir)
-    echo("finished", ANSI_LIGHT_GREEN, msg)
+    echo(PKG_NAME, ANSI_LIGHT_GREEN, msg)
 
-  def export_python(self, basename, notebook):
+  def export_python(self, basename, notebook_node):
     """
     Exports a pre-loaded notebook in python format.
     """
-    (content, resources) = self.python_exporter.from_notebook_node(notebook)
+    (content, resources) = self.python_exporter.from_notebook_node(notebook_node)
 
     # write python file
     py_filename = basename + '.py'
     write_file(self.output_dir, py_filename, content, write_mode='w')
 
-  def export_rst_files(self, basename, notebook):
+  def export_rst_files(self, basename, notebook_node):
     """
     Exports a pre-loaded notebook in rst format.
     """
-    (content, resources) = self.rst_exporter.from_notebook_node(notebook)
+    (content, resources) = self.rst_exporter.from_notebook_node(notebook_node)
 
     # write rst file
     rst_filename = basename + '.rst'
