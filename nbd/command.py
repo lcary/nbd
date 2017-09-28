@@ -53,6 +53,14 @@ def git_show_old_copy(filepath, commit='HEAD^'):
 
 
 def git_diff_no_index(file_a, file_b):
-  args = ['git', '--no-pager', 'diff', '--exit-code', '--no-index', file_a, file_b]
+  args = [
+    'git',
+    '--no-pager',
+    'diff',
+    '--exit-code',
+    '--no-index',
+    '--color=always',
+    file_a,
+    file_b]
   echo('git', ANSI_LIGHT_RED, " ".join(args), debug=True)
   call(args)
