@@ -13,18 +13,20 @@ class NotebookExporter(object):
 
   def __init__(self, output_dir):
     self.output_dir = output_dir
-    # delegate exporting to nbexport
     self.python_exporter = PythonExporter()
     self.rst_exporter = RSTExporter()
 
   def process_notebook(self, basename, filepath, nbformat_version):
+    """
+    Reads a notebook of a given format, then exports data.
+    """
     notebook_node = nbformat.read(filepath, as_version=nbformat_version)
     self.export_python(basename, notebook_node)
     self.export_rst_files(basename, notebook_node)
 
   def process_notebooks(self, notebook_filepaths, nbformat_version):
     """
-    Loads and exports notebook to a predetermined set of formats.
+    Loads and exports notebooks to a predetermined set of formats.
     """
     for fp in notebook_filepaths:
       basename = get_file_id(fp)
@@ -32,7 +34,7 @@ class NotebookExporter(object):
 
   def export_python(self, basename, notebook_node):
     """
-    Exports a pre-loaded notebook in python format.
+    Exports notebook data in python format.
     """
     (content, resources) = self.python_exporter.from_notebook_node(notebook_node)
 
@@ -42,7 +44,7 @@ class NotebookExporter(object):
 
   def export_rst_files(self, basename, notebook_node):
     """
-    Exports a pre-loaded notebook in rst format.
+    Exports notebook data in rst format.
     """
     (content, resources) = self.rst_exporter.from_notebook_node(notebook_node)
 
@@ -50,7 +52,7 @@ class NotebookExporter(object):
     rst_filename = basename + '.rst'
     write_file(self.output_dir, rst_filename, content, write_mode='w')
 
-    # write any additional resources
+    # write any additional resources (e.g. PNGs)
     for (res_filename, b64data) in resources['outputs'].items():
       res_filepath = get_file_id(basename + "__" + res_filename)
       write_file(self.output_dir, res_filepath, b64data, write_mode='wb')
