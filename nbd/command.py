@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 import logging
 from os import (chdir, getcwd)
-from subprocess import (call, check_output)
 
 logger = logging.getLogger()
 
