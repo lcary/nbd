@@ -1,3 +1,4 @@
+
 nbd tutorial
 ============
 
@@ -10,7 +11,7 @@ The tutorial explains:
 Check for changes
 -----------------
 
-Lets start by changing the working directory to the demo/
+Lets start by changing the working directory to the `demo/`
 directory in the repo, e.g.:
 ```
 [demo@nbd]$ cd ~/workspace/nbd/demo
@@ -19,8 +20,6 @@ directory in the repo, e.g.:
 Run as follows:
 ```
 [demo@nbd]$ nbd demo.ipynb
-2017-09-28 01:31:20,866 - INFO - nbd: git diff output below (no output == no diff)
-[demo@nbd]$
 ```
 
 There was no output, so we conclude there was no diff to the file. Git confirms:
@@ -33,7 +32,7 @@ nothing to commit, working tree clean
 Displaying notebook changes
 ---------------------------
 
-Below, we'll demonstrate that ndb can make it easy to see
+Below, we'll demonstrate that `nbd` can make it easy to see
 resource file modifications in addition to RST and Python changes.
 
 First, change the ipynb source file via quick and dirty find-replace:
@@ -46,9 +45,9 @@ Then:
 2. re-run all code blocks to regenerate outputs
 3. re-save the file
 
-Run ndb and pipe to `less(1)` to shows a pretty readable diff:
+Run nbd and pipe to `less(1)` to shows a pretty readable diff:
 ```diff
-[demo@nbd]$ ndb demo.ipynb | less
+[demo@nbd]$ nbd demo.ipynb | less
 diff --git a/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmpQdQOoi/old/demo__demo.ipynb.py b/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmpQdQOoi/new/demo__demo.ipynb.py
 index d93157c..a806a3f 100644
 --- a/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmpQdQOoi/old/demo__demo.ipynb.py
@@ -90,7 +89,7 @@ index d2eb065..63f65db 100644
 ```
 So we see the `np.linspace` code's args change as expected.
 
-If we continue scrolling, the `ndb` diff is much more readable than
+If we continue scrolling, the `nbd` diff is much more readable than
 if we try to git-diff the demo.ipynb source code directly with git.
 Try it out with `git diff demo.ipynb`. You'll see a ton of lines that
 only display changes to the image binary file code inline.
@@ -100,7 +99,7 @@ The notebook's image changed since the arguments passed to
 So where's the image code in the `nbd` diff? Scrolling down to the
 end of the diff, we see a PNG (`demo__demo.ipynb__output_3_0.png`) has changed:
 ```diff
-[demo@nbd]$ ndb demo.ipynb | tail -n 5
+[demo@nbd]$ nbd demo.ipynb | tail -n 5
 +      6.54774048  6.56427518  6.58080987  6.59734457]
 
 diff --git a/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmprcSHbr/old/demo__demo.ipynb__output_3_0.png b/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmprcSHbr/new/demo__demo.ipynb__output_3_0.png
@@ -119,4 +118,4 @@ in order to exclusively view files that have changed:
 /var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmpOkukrd/new/demo__demo.ipynb__output_3_0.png
 ```
 
-This shows there are python, rst, and png changes to our notebook.
+This shows there are Python, RST, and PNG file changes to our notebook.
