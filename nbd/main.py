@@ -4,10 +4,11 @@ from argparse import (ArgumentParser, ArgumentDefaultsHelpFormatter)
 import logging
 from os import path as ospath
 
-from .command import (cd_if_necessary, git_repo_root)
+from .command import cd_if_necessary
 from .const import PKG_NAME
 from .diff import DiffGenerator
 from .fileops import normrelpath
+from .git import Git
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -82,7 +83,7 @@ def main():
   nb_filepaths = map(ospath.abspath, args.notebooks)
 
   # cd to the root of the git repo
-  repo_root = git_repo_root()
+  repo_root = Git.rev_parse_show_toplevel()
   with cd_if_necessary(repo_root):
 
     # relativize absolute filepaths to root of repo

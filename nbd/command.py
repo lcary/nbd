@@ -35,31 +35,3 @@ def cd_if_necessary(path):
       _cd_with_echo(orig)
     else:
       pass
-
-
-def git_repo_root():
-  args = ['git', 'rev-parse', '--show-toplevel']
-  echo('git', ANSI_LIGHT_RED, " ".join(args))
-  return check_output(args).strip('\n')
-
-
-def git_show_old_copy(filepath, commit='HEAD^'):
-  args = ['git', 'show', '{}:{}'.format(commit, filepath)]
-  echo('git', ANSI_LIGHT_RED, " ".join(args))
-  return check_output(args)
-
-
-def git_diff_no_index(file_a, file_b, options=None):
-  args = [
-    'git',
-    '--no-pager',
-    'diff',
-    '--exit-code',
-    '--no-index',
-    '--color=always',
-    ]
-  if options is not None:
-    args.extend(options)
-  args.extend([file_a, file_b])
-  echo('git', ANSI_LIGHT_RED, " ".join(args))
-  call(args)

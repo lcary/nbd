@@ -1,10 +1,11 @@
 from distutils import dir_util
 from os import path as ospath
 
-from .command import (ANSI_LIGHT_GREEN, echo, git_diff_no_index, git_show_old_copy)
+from .command import (ANSI_LIGHT_GREEN, echo)
 from .const import PKG_NAME
 from .export import NotebookExporter
 from .fileops import (get_file_id, mktempdir, write_file)
+from .git import Git
 
 
 class DiffGenerator(object):
@@ -16,7 +17,7 @@ class DiffGenerator(object):
     self.new_commit_sha = new_commit_sha
 
   def _write_old_copy(self, filepath, output_dir):
-    content = git_show_old_copy(filepath)
+    content = Git.show_old_copy(filepath)
     filename = ospath.basename(filepath)
     write_file(output_dir, filename, content)
     return ospath.join(output_dir, filename)
@@ -44,4 +45,4 @@ class DiffGenerator(object):
       # show git diff of exported data within tempdir
       msg = "git diff output below (no output == no diff)"
       echo(PKG_NAME, ANSI_LIGHT_GREEN, msg)
-      git_diff_no_index(old_dir, new_dir, options=git_diff_options)
+      Git.diff_no_index(old_dir, new_dir, options=git_diff_options)
