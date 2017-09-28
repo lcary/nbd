@@ -1,15 +1,10 @@
 from setuptools import setup, find_packages
-# consistent encoding open():
-from codecs import open
 import io
 import os
 import re
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-def read_long_description():
-    with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-        return f.read()
 
 def read(*names, **kwargs):
     with io.open(
@@ -26,6 +21,7 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
+
 setup(
     name='nbd',
 
@@ -34,10 +30,11 @@ setup(
 
     description='lightweight ipython notebook diffing tool',
     # TODO: "python setup.py egg_info" fails with error code 1 due to no readme
-    # long_description=read_long_description(),
+    long_description=read('README.rst'),
 
     # project homepage
     url='https://github.com/lcary/nbd',
+    download_url='https://github.com/lcary/nbd/archive/1.0.0.dev1.tar.gz',
 
     author='Luc Cary',
     author_email='luc.cary@gmail.com',
@@ -65,8 +62,6 @@ setup(
 
     # use find_packages() to find the package
     packages=find_packages(exclude=['demo']),
-    package_data={'': ['README.md']},
-    include_package_data=True,
 
     # runtime dependencies
     install_requires=['nbconvert', 'nbformat', 'ipython'],
