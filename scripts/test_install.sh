@@ -16,4 +16,4 @@ python setup.py sdist
 
 # TODO: automatically parse __version__ like setup.py, this is a PITA.
 #       this todo likely requires converting this to a python script.
-pip install ./dist/nbd-0.1.dev3.tar.gz
+pip install ./dist/nbd-0.1.*.tar.gz
