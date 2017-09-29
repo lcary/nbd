@@ -106,7 +106,6 @@ diff --git a/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmprcSHbr/old/demo_
 index 8173155..ec4a56d 100644
 Binary files a/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmprcSHbr/old/demo__demo.ipynb__output_3_0.png and b/var/folders/c1/83dlqbss5w7gh3ywffq3yb600000gn/T/tmprcSHbr/new/demo__demo.ipynb__output_3_0.png differ
 ```
-This shows how 
 
 We can also easily pass through an option to the `git-diff` command
 in order to exclusively view files that have changed:
