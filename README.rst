@@ -94,7 +94,7 @@ Tutorial
 --------
 
 See the tutorial in the ``demo/`` directory: `demo
-tutorial <demo/TUTORIAL.md>`__.
+tutorial <demo/tutorial.rst>`__.
 
 .. raw:: html
 

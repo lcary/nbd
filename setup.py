@@ -33,7 +33,8 @@ setup(
 
     # project homepage
     url='https://github.com/lcary/nbd',
-    download_url='https://github.com/lcary/nbd/archive/1.0.0.dev1.tar.gz',
+    download_url='https://github.com/lcary/nbd/archive/v{}.tar.gz'.format(
+        find_version("nbd", "__init__.py")),
 
     author='Luc Cary',
     author_email='luc.cary@gmail.com',
