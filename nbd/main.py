@@ -60,6 +60,7 @@ def _get_args():
     '--new-commit',
     default=None,
     help='newer commit hash to diff against')
+  # can we use nargs or additional args after '--' for git-diff opts?
   parser.add_argument(
     '-g',
     '--git-diff-option',

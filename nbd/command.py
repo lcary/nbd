@@ -12,8 +12,8 @@ def _color(msg, ansicode):
   return '\033[1;{ansicode};40m{msg}\033[0m'.format(msg=msg, ansicode=ansicode)
 
 
-def echo(subject, ansicode, msg):
-  logger.debug('{}: {}'.format(_color(subject, ansicode), msg))
+def echo(subject, ansicode, msg, lvl=logger.debug):
+  lvl('{}: {}'.format(_color(subject, ansicode), msg))
 
 
 def _cd_with_echo(path):

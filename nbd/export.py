@@ -1,3 +1,5 @@
+import logging
+
 import nbformat
 from nbconvert import (PythonExporter, RSTExporter)
 
@@ -5,6 +7,8 @@ from .fileops import (get_file_id, write_file)
 
 EXPORT_FORMAT_PYTHON = 'python'
 EXPORT_FORMAT_RST = 'rst'
+
+logger = logging.getLogger()
 
 
 class NotebookExporter(object):
@@ -64,7 +68,12 @@ class NotebookExporter(object):
     rst_filename = basename + '.rst'
     write_file(self.output_dir, rst_filename, content, write_mode='w')
 
-    # write any additional resources (e.g. PNGs)
-    for (res_filename, b64data) in resources['outputs'].items():
-      res_filepath = get_file_id(basename + "__" + res_filename)
-      write_file(self.output_dir, res_filepath, b64data, write_mode='wb')
+    # try writing any additional resources (e.g. PNGs)
+    try:
+      resource_items = resources['outputs'].items()
+    except AttributeError:
+      logger.debug('Unable to find resources in notebook when exporting RST.')
+    else:
+      for (res_filename, b64data) in resource_items:
+        res_filepath = get_file_id(basename + "__" + res_filename)
+        write_file(self.output_dir, res_filepath, b64data, write_mode='wb')
