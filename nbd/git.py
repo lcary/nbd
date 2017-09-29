@@ -35,3 +35,9 @@ class Git(object):
     args.extend([file_a, file_b])
     echo('git', ANSI_LIGHT_RED, " ".join(args))
     call(args)
+
+  @staticmethod
+  def diff_name_status(commit):
+    args = ['git', 'diff', commit, '--name-status']
+    echo('git', ANSI_LIGHT_RED, " ".join(args))
+    return check_output(args)
