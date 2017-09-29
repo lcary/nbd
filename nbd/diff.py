@@ -1,9 +1,10 @@
+from collections import namedtuple
 from distutils import dir_util
 import logging
 from os import path as ospath
 from subprocess import CalledProcessError
 
-from .command import (ANSI_LIGHT_GREEN, echo)
+from .command import (ANSI_LIGHT_GREEN, ANSI_LIGHT_RED, echo)
 from .const import PKG_NAME
 from .export import NotebookExporter
 from .fileops import (get_file_id, mktempdir, write_file)
@@ -11,108 +12,164 @@ from .git import Git
 
 logger = logging.getLogger()
 
+FileData = namedtuple('FileData', 'commit output_dir input_filepath tempdir')
+
 
 class DiffGenerator(object):
 
   def __init__(self, filepaths, old_commit, new_commit, export_formats):
-    self.filepaths = filepaths
-    # use these at some point
-    self.old_commit = old_commit
-    self.new_commit = new_commit
-    self.export_formats = export_formats
+    self._filepaths = filepaths
+    self._old_commit = old_commit
+    self._new_commit = new_commit
+    self._export_formats = export_formats
+    self._parser = GitDiffParser()
 
-  class StillUnableToFindFile(Exception):
-    pass
-
-  @classmethod
-  def _check_for_renamed_files_in_status(cls, filepath, commit):
+  def _try_retrieve_renamed_file(self, file_data):
     """
-    This function tries to find renames and the commit of the rename
-    for a given filepath. If we can find it, we can read the content 
-    via git show later. Otherwise, raise an error.
+    Write the contents of the file before it was renamed.
+    Return the path the newly written file in the tempdir.
     """
-    output = Git.diff_name_status(commit)
-    output_lines = output.split('\n')
-    renames = [l for l in output_lines if l.startswith('R')]
-    for rn_line in renames:
-      try:
-        (status, old_fp, new_fp) = rn_line.split('\t')
-      except ValueError as e:
-        logger.warn('Unable to parse git output: {}'.format(rn_line))
-        logger.debug(str(e))
-      else:
-        if new_fp.strip() == filepath:
-          echo('git', ANSI_LIGHT_GREEN, 'git shows renamed file:\n{}'.format(rn_line), lvl=logger.info)
-          return old_fp
-    raise cls.StillUnableToFindFile("Still can't find it!")
+    old_fp = self._parser.retreive_renamed_file(file_data)
+    content = Git.show(old_fp, commit=file_data.commit)
+    filename = ospath.basename(old_fp)
+    write_file(file_data.tempdir, filename, content)
+    return ospath.join(file_data.tempdir, filename)
 
-  @classmethod
-  def _handle_file_not_found(cls, input_filepath, filename, output_filepath, output_dir, commit):
+  def _try_write_renamed_file(self, file_data):
+    """
+    This fallback method checks if a file was renamed in git history.
+    If it was renamed, this function writes content and returns the
+    filepath to the old version of the file written to tempdir.
+    Otherwise, it returns None to signify the file was not found.
+    """
     try:
-      old_fp = cls._check_for_renamed_files_in_status(input_filepath, commit)
-      content = Git.show(old_fp, commit=commit)
-      write_file(output_dir, filename, content)
-      return output_filepath
-    except (cls.StillUnableToFindFile, CalledProcessError):
+      return self._try_retrieve_renamed_file(file_data)
+    except (CalledProcessError, self._parser.RenamedFileNotFound):
       return None
 
-  def _write_previous_version(self, input_filepath, output_dir, commit):
+  def _write_previous_version(self, file_data):
     """
-    Write a committed version of a file to a given output directory.
+    Write a committed version of a file to tempdir.
     """
-    filename = ospath.basename(input_filepath)
-    output_filepath = ospath.join(output_dir, filename)
+    filename = ospath.basename(file_data.input_filepath)
+    output_filepath = ospath.join(file_data.tempdir, filename)
+
     try:
-      content = Git.show(input_filepath, commit=commit)
-    except CalledProcessError as e:
-      if e.returncode == 128:
-        return self._handle_file_not_found(
-          input_filepath,
-          filename,
-          output_filepath,
-          output_dir,
-          commit)
+      content = Git.show(file_data.input_filepath, commit=file_data.commit)
+    except CalledProcessError as exc:
+      if exc.returncode == 128:
+        # Git could not find the file. Try writing a renamed version:
+        return self._try_write_renamed_file(file_data)
       else:
-        raise e
+        raise exc
     else:
-      write_file(output_dir, filename, content)
-    # return the output filepath in all cases:
-    return output_filepath
+      write_file(file_data.tempdir, filename, content)
+      return output_filepath
+
+  def _export_notebook_to_tempdir(self, file_id, file_data, nbformat_version):
+    """
+    Export data from the notebook to a temporary directory.
+    """
+
+    if file_data.commit is None:
+      # retrieve notebook from the input filepath.
+      output_filepath = file_data.input_filepath
+    else:
+      # retrieve notebook from git history.
+      output_filepath = self._write_previous_version(file_data)
+
+    if output_filepath is not None:
+      exporter = NotebookExporter(file_data.output_dir, self._export_formats)
+      exporter.process_notebook(file_id, output_filepath, nbformat_version)
 
   def _export_old_and_new_notebooks(self, tempdir, old_dir, new_dir, nbformat_version):
-    for relative_filepath in self.filepaths:
-      file_id = get_file_id(relative_filepath)
-
-      # TODO: this code is not very DRY
-
-      # get new version of notebook from git history if and only if a different commit
-      # is requested. otherwise, get it directly from the filepath in repo.
-      if self.new_commit is None:
-        new_filepath = relative_filepath
-      else:
-        new_filepath = self._write_previous_version(relative_filepath, tempdir, self.new_commit)
-
-      if new_filepath is not None:
-        exporter = NotebookExporter(new_dir, self.export_formats)
-        exporter.process_notebook(file_id, new_filepath, nbformat_version)
-
-      # get previous version of notebook from git history, output to tempdir
-      old_filepath = self._write_previous_version(relative_filepath, tempdir, self.old_commit)
-
-      if old_filepath is not None:
-        exporter = NotebookExporter(old_dir, self.export_formats)
-        exporter.process_notebook(file_id, old_filepath, nbformat_version)
+    for filepath in self._filepaths:
+      file_id = get_file_id(filepath)
+      old_file_data = FileData(self._old_commit, old_dir, filepath, tempdir)
+      new_file_data = FileData(self._new_commit, new_dir, filepath, tempdir)
+      self._export_notebook_to_tempdir(file_id, old_file_data, nbformat_version)
+      self._export_notebook_to_tempdir(file_id, new_file_data, nbformat_version)
 
 
   def get_diff(self, nbformat_version, git_diff_options):
     with mktempdir() as tempdir:
+      # create old and new directories
       old_dir = ospath.join(tempdir, 'old')
       new_dir = ospath.join(tempdir, 'new')
       dir_util.mkpath(old_dir)
       dir_util.mkpath(new_dir)
+
       # # export data from notebooks in git repo and notebooks in tempdir
       self._export_old_and_new_notebooks(tempdir, old_dir, new_dir, nbformat_version)
+
       # show git diff of exported data within tempdir
       msg = "git diff output below (no output == no diff)"
       echo(PKG_NAME, ANSI_LIGHT_GREEN, msg)
       Git.diff_no_index(old_dir, new_dir, options=git_diff_options)
+
+
+class GitDiffParser(object):
+  """
+  Fallback handler that retreives renamed filenames from git history.
+  Things get ugly here. This class parses git diff output.
+
+  The `git diff --name-status` command produces output like:
+
+      R100\tdemo/demo2.ipynb\tdemo/demo3.ipynb
+
+  Where the symbols are as follows:
+
+      R             status indicating rename
+      100           similarity index
+      \t            delineator
+      demo2.ipynb   old filename
+      demo3.ipynb   new filename
+
+  If a renamed file cannot be found, an exception is raised.
+  """
+
+  class RenamedFileNotFound(Exception):
+    """
+    Raise when unable to find renamed files in git-diff output.
+    """
+    pass
+
+  @staticmethod
+  def _parse_rename(rename_line, input_filepath):
+    try:
+      (status, old_fp, new_fp) = rename_line.split('\t')
+    except ValueError as e:
+      logger.warn('Unable to parse git output: {}'.format(rename_line))
+      logger.debug(str(e))
+    else:
+      if new_fp.strip() == input_filepath:
+        return old_fp
+    return None
+
+  @staticmethod
+  def _git_diff_renamed_files(commit):
+    """
+    This function runs the git-diff command and returns rename lines.
+    """
+    output = Git.diff_name_status(commit)
+    lines = output.split('\n')
+    return [l for l in lines if l.startswith('R')]
+
+  @classmethod
+  def retreive_renamed_file(cls, file_data):
+    """
+    Return the filepath of the previous filename if it was renamed.
+    Otherwise, throw exception.
+    """
+    fp = file_data.input_filepath
+    renamed_file_lines = cls._git_diff_renamed_files(file_data.commit)
+
+    for line in renamed_file_lines:
+      old_fp = cls._parse_rename(line, fp)
+      if old_fp is not None:
+        msg = 'git shows renamed file:\n{}'.format(line)
+        echo('git', ANSI_LIGHT_RED, msg, lvl=logger.info)
+        return old_fp
+
+    msg = 'Unable to detect renamed version of file: {}'.format(fp)
+    raise cls.RenamedFileNotFound(msg)
