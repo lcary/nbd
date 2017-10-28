@@ -24,13 +24,13 @@ def get_file_id(filepath):
   return filepath.replace(ospath.sep, "__")
 
 
-def write_file(dir_path, filename, content, write_mode='w'):
+def write_file(filepath, content, write_mode='w'):
   """
   Write content to a file with a given name in a given directory.
 
   Additionally, log the path where the content was written to.
   """
-  abspath = ospath.abspath(ospath.join(dir_path, filename))
+  abspath = ospath.abspath(filepath)
   with open(abspath, write_mode) as f:
     f.write(content)
   nbytes = ospath.getsize(abspath)

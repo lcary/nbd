@@ -31,9 +31,9 @@ class DiffGenerator(object):
     """
     old_fp = self._parser.retreive_renamed_file(file_data)
     content = Git.show(old_fp, commit=file_data.commit)
-    filename = ospath.basename(old_fp)
-    write_file(file_data.tempdir, filename, content)
-    return ospath.join(file_data.tempdir, filename)
+    filepath = ospath.join(file_data.tempdir, ospath.basename(old_fp))
+    write_file(filepath, content)
+    return filepath
 
   def _try_write_renamed_file(self, file_data):
     """
@@ -63,7 +63,7 @@ class DiffGenerator(object):
       else:
         raise exc
     else:
-      write_file(file_data.tempdir, filename, content)
+      write_file(ospath.join(file_data.tempdir, filename), content)
       return output_filepath
 
   def _export_notebook_to_tempdir(self, file_id, file_data, nbformat_version):

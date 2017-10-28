@@ -1,3 +1,6 @@
+
+from abc import (ABCMeta, abstractmethod)
+from os import path as ospath
 import logging
 
 import nbformat
@@ -11,6 +14,65 @@ EXPORT_FORMAT_RST = 'rst'
 logger = logging.getLogger()
 
 
+class ExporterWrapper(object):
+
+  __metaclass__ = ABCMeta
+
+  @abstractmethod
+  def export(self, basename, notebook_node, filepath):
+    raise NotImplementedError('Exporter wrapper not implemented.')
+
+  def _export_content(self, notebook_node, filepath):
+    """
+    Exports notebook data in a given format to a file in the output dir.
+    Returns notebook content and resources.
+    """
+    (content, resources) = self.exporter.from_notebook_node(notebook_node)
+    write_file(filepath, content, write_mode='w')
+    return (content, resources)
+
+
+class PythonExporterWrapper(ExporterWrapper):
+
+  def __init__(self):
+    self.exporter = PythonExporter()
+    self.file_extension = '.py'
+
+  def export(self, basename, notebook_node, output_dir):
+    """
+    Exports notebook data in python format.
+    """
+    filepath = ospath.join(output_dir, basename + self.file_extension)
+    self._export_content(notebook_node, filepath)
+
+
+class RSTExporterWrapper(ExporterWrapper):
+
+  def __init__(self):
+    self.exporter = RSTExporter()
+    self.file_extension = '.py'
+
+  def export(self, basename, notebook_node, output_dir):
+    """
+    Exports notebook data in rst format.
+    """
+    filepath = ospath.join(output_dir, basename + self.file_extension)
+    (content, resources) = self._export_content(notebook_node, filepath)
+    self._export_resources(basename, output_dir, resources)
+
+  def _export_resources(self, basename, output_dir, resources):
+    """
+    Exports any additional resources (e.g. PNG files in notebook)
+    """
+    try:
+      for (filename, b64data) in resources['outputs'].items():
+        filename = get_file_id(basename + "__" + filename)
+        filepath = ospath.join(output_dir, filename)
+        write_file(filepath, b64data, write_mode='wb')
+    except AttributeError:
+      logger.debug('Unable to find resources in notebook when exporting RST.')
+
+
 class NotebookExporter(object):
   """
   Process a list of notebooks by creating a directory and exporting
@@ -21,8 +83,8 @@ class NotebookExporter(object):
   def __init__(self, output_dir, export_formats=None):
     self.output_dir = output_dir
     self._export_formats = self._get_export_formats(export_formats)
-    self._python_exporter = PythonExporter()
-    self._rst_exporter = RSTExporter()
+    self.python_exporter = PythonExporterWrapper()
+    self.rst_exporter = RSTExporterWrapper()
 
   def _get_export_formats(self, export_formats):
     if export_formats is None:
@@ -36,9 +98,9 @@ class NotebookExporter(object):
     """
     notebook_node = nbformat.read(filepath, as_version=nbformat_version)
     if EXPORT_FORMAT_PYTHON in self._export_formats:
-      self.export_python(basename, notebook_node)
+      self.python_exporter.export(basename, notebook_node, self.output_dir)
     if EXPORT_FORMAT_RST in self._export_formats:
-      self.export_rst_files(basename, notebook_node)
+      self.rst_exporter.export(basename, notebook_node, self.output_dir)
 
   def process_notebooks(self, notebook_filepaths, nbformat_version):
     """
@@ -47,33 +109,3 @@ class NotebookExporter(object):
     for fp in notebook_filepaths:
       basename = get_file_id(fp)
       self.process_notebook(basename, fp, nbformat_version)
-
-  def export_python(self, basename, notebook_node):
-    """
-    Exports notebook data in python format.
-    """
-    (content, resources) = self._python_exporter.from_notebook_node(notebook_node)
-
-    # write python file
-    py_filename = basename + '.py'
-    write_file(self.output_dir, py_filename, content, write_mode='w')
-
-  def export_rst_files(self, basename, notebook_node):
-    """
-    Exports notebook data in rst format.
-    """
-    (content, resources) = self._rst_exporter.from_notebook_node(notebook_node)
-
-    # write rst file
-    rst_filename = basename + '.rst'
-    write_file(self.output_dir, rst_filename, content, write_mode='w')
-
-    # try writing any additional resources (e.g. PNGs)
-    try:
-      resource_items = resources['outputs'].items()
-    except AttributeError:
-      logger.debug('Unable to find resources in notebook when exporting RST.')
-    else:
-      for (res_filename, b64data) in resource_items:
-        res_filepath = get_file_id(basename + "__" + res_filename)
-        write_file(self.output_dir, res_filepath, b64data, write_mode='wb')
