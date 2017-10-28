@@ -44,7 +44,5 @@ except CalledProcessError:
 shell('python setup.py bdist')
 shell('python setup.py sdist')
 
-# TODO: automatically parse __version__ like setup.py, this is a PITA.
-#       this todo likely requires converting this to a python script.
 version = find_version("nbd", "__init__.py")
 shell('pip install ./dist/nbd-{}.tar.gz'.format(version))
