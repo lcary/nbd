@@ -15,6 +15,7 @@ logger = logging.getLogger()
 
 
 class ExporterWrapper(object):
+  FILE_EXTENSION = NotImplemented
 
   __metaclass__ = ABCMeta
 
@@ -31,32 +32,37 @@ class ExporterWrapper(object):
     write_file(filepath, content, write_mode='w')
     return (content, resources)
 
+  @classmethod
+  def _get_filepath(cls, output_dir, basename):
+    filename = "{}.{}".format(basename, cls.FILE_EXTENSION)
+    return ospath.join(output_dir, filename)
+
 
 class PythonExporterWrapper(ExporterWrapper):
+  FILE_EXTENSION = '.py'
 
   def __init__(self):
     self.exporter = PythonExporter()
-    self.file_extension = '.py'
 
   def export(self, basename, notebook_node, output_dir):
     """
     Exports notebook data in python format.
     """
-    filepath = ospath.join(output_dir, basename + self.file_extension)
+    filepath = self._get_filepath(output_dir, basename)
     self._export_content(notebook_node, filepath)
 
 
 class RSTExporterWrapper(ExporterWrapper):
+  FILE_EXTENSION = '.rst'
 
   def __init__(self):
     self.exporter = RSTExporter()
-    self.file_extension = '.py'
 
   def export(self, basename, notebook_node, output_dir):
     """
     Exports notebook data in rst format.
     """
-    filepath = ospath.join(output_dir, basename + self.file_extension)
+    filepath = self._get_filepath(output_dir, basename)
     (content, resources) = self._export_content(notebook_node, filepath)
     self._export_resources(basename, output_dir, resources)
 
