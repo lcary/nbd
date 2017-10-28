@@ -1,6 +1,6 @@
 from subprocess import (call, check_output)
 
-from .command import (ANSI_LIGHT_RED, echo)
+from nbd.command import (ANSI_LIGHT_RED, echo)
 
 HEAD = 'HEAD'
 

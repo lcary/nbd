@@ -4,11 +4,11 @@ import logging
 from os import path as ospath
 from subprocess import CalledProcessError
 
-from .command import (ANSI_LIGHT_GREEN, ANSI_LIGHT_RED, echo)
-from .const import PKG_NAME
-from .export import NotebookExporter
-from .fileops import (get_file_id, mktempdir, write_file)
-from .git import Git
+from nbd.command import (ANSI_LIGHT_GREEN, ANSI_LIGHT_RED, echo)
+from nbd.const import PKG_NAME
+from nbd.export import NotebookExporter
+from nbd.fileops import (get_file_id, mktempdir, write_file)
+from nbd.git import Git
 
 logger = logging.getLogger()
 
