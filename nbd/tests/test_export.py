@@ -1,6 +1,5 @@
-from contextlib import contextmanager
-
 from .context import export
+from .util import mock_write_file
 
 from mock import (mock_open, patch)
 import pytest
@@ -97,18 +96,6 @@ def test_export_content(exporter_wrapper):
 def test_get_filepath(exporter_wrapper):
   expect = 'mydir/myfile.{}'.format(TEST_EXTENSION)
   assert exporter_wrapper._get_filepath('mydir', 'myfile') == expect
-
-
-@contextmanager
-def mock_write_file(mock_open_object):
-  # mock parts of the write_file function from fileops.py that
-  # would otherwise interfere with tests. keep tabs on open() calls.
-  try:
-    with patch("__builtin__.open", mock_open_object):
-      with patch('nbd.fileops.ospath.getsize'):
-        yield
-  finally:
-    pass
 
 
 def test_python_exporter(python_exporter_wrapper, empty_resources):

@@ -104,8 +104,8 @@ def main():
   nb_filepaths = map(ospath.abspath, args.notebooks)
 
   # cd to the root of the git repo
-  git = Git()
-  repo_root = git.rev_parse_show_toplevel()
+  git_cmd = Git()
+  repo_root = git_cmd.rev_parse_show_toplevel()
 
   with cd_if_necessary(repo_root):
 
@@ -118,7 +118,7 @@ def main():
 
     # export notebooks to various git-diff-friendly formats in tempdir
     diff_gen = DiffGenerator(
-      git,
+      git_cmd,
       nb_filepaths,
       args.old_commit,
       args.new_commit,
