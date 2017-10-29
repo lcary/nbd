@@ -2,7 +2,7 @@ init:
 	pip install -r requirements.txt
 
 test:
-	py.test --pyargs nbd
+	py.test
 
 install:
 	python scripts/test_install.py

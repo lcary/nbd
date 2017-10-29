@@ -28,10 +28,13 @@ class ExporterStub(object):
 
 
 class ExporterWrapperStub(export.ExporterWrapper):
-  FILE_EXTENSION = TEST_EXTENSION
 
   def __init__(self):
     self.exporter = ExporterStub()
+
+  @property
+  def file_extension(self):
+    return TEST_EXTENSION
 
   def export(self):
     pass
@@ -77,7 +80,7 @@ def notebook_exporter():
 
 
 def test_export_wrapper_subclass(exporter_wrapper):
-  assert exporter_wrapper.FILE_EXTENSION == TEST_EXTENSION
+  assert exporter_wrapper.file_extension == TEST_EXTENSION
 
 
 def test_export_content(exporter_wrapper):
@@ -109,7 +112,7 @@ def mock_nbconvert_and_check_output(mock_target, file_extension):
 
 
 def test_python_exporter(python_exporter_wrapper, empty_resources):
-  extension = python_exporter_wrapper.FILE_EXTENSION
+  extension = python_exporter_wrapper.file_extension
   mock_target = 'nbd.export.PythonExporter.from_notebook_node'
   with mock_nbconvert_and_check_output(mock_target, extension) as mock_nbconvert:
     mock_nbconvert.return_value = (TEST_CONTENT, empty_resources)
@@ -117,7 +120,7 @@ def test_python_exporter(python_exporter_wrapper, empty_resources):
 
 
 def test_rst_exporter_no_resources(rst_exporter_wrapper, empty_resources):
-  extension = rst_exporter_wrapper.FILE_EXTENSION
+  extension = rst_exporter_wrapper.file_extension
   mock_target = 'nbd.export.RSTExporter.from_notebook_node'
   with mock_nbconvert_and_check_output(mock_target, extension) as mock_nbconvert:
     mock_nbconvert.return_value = (TEST_CONTENT, empty_resources)

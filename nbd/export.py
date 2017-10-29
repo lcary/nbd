@@ -1,4 +1,4 @@
-from abc import (ABCMeta, abstractmethod)
+from abc import (ABCMeta, abstractmethod, abstractproperty)
 from os import path as ospath
 import logging
 
@@ -14,13 +14,17 @@ logger = logging.getLogger()
 
 
 class ExporterWrapper(object):
-  FILE_EXTENSION = NotImplemented
+  NOT_IMPL_MSG = 'Exporter wrapper not implemented.'
 
   __metaclass__ = ABCMeta
 
+  @abstractproperty
+  def file_extension(self):
+    raise NotImplementedError(self.NOT_IMPL_MSG)
+
   @abstractmethod
   def export(self, basename, notebook_node, filepath):
-    raise NotImplementedError('Exporter wrapper not implemented.')
+    raise NotImplementedError(self.NOT_IMPL_MSG)
 
   def _export_content(self, notebook_node, filepath):
     """
@@ -31,17 +35,19 @@ class ExporterWrapper(object):
     write_file(filepath, content, write_mode='w')
     return (content, resources)
 
-  @classmethod
-  def _get_filepath(cls, output_dir, basename):
-    filename = "{}.{}".format(basename, cls.FILE_EXTENSION)
+  def _get_filepath(self, output_dir, basename):
+    filename = "{}.{}".format(basename, self.file_extension)
     return ospath.join(output_dir, filename)
 
 
 class PythonExporterWrapper(ExporterWrapper):
-  FILE_EXTENSION = 'py'
 
   def __init__(self):
     self.exporter = PythonExporter()
+
+  @property
+  def file_extension(self):
+    return 'py'
 
   def export(self, basename, notebook_node, output_dir):
     """
@@ -52,10 +58,13 @@ class PythonExporterWrapper(ExporterWrapper):
 
 
 class RSTExporterWrapper(ExporterWrapper):
-  FILE_EXTENSION = 'rst'
 
   def __init__(self):
     self.exporter = RSTExporter()
+
+  @property
+  def file_extension(self):
+    return 'rst'
 
   def export(self, basename, notebook_node, output_dir):
     """
