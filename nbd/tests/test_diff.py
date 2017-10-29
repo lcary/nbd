@@ -86,7 +86,10 @@ def test_no_retreive_renamed_file(diff_parser, file_data):
 
 
 @contextmanager
-def mock_git_and_check_output(side_effects, input_filepath, output_filepath):
+def mock_git_and_check_output(side_effects,
+                              input_filepath,
+                              output_filepath,
+                              write_mode='w'):
   m = mock_open()
   test_file_content = '<some fake content>'
 
@@ -98,7 +101,7 @@ def mock_git_and_check_output(side_effects, input_filepath, output_filepath):
         yield
   finally:
     # assert output file was written with test file content
-    m.assert_called_once_with(output_filepath, 'w')
+    m.assert_called_once_with(output_filepath, write_mode)
     handle = m()
     handle.write.assert_called_once_with(test_file_content)
 
@@ -115,7 +118,10 @@ def test_try_write_renamed_file(diff_generator, file_data):
 def test_write_previous_version_success(diff_generator, file_data):
   input_filepath = file_data.input_filepath
   output_filepath = ospath.join(file_data.tempdir, file_data.input_filepath)
-  with mock_git_and_check_output([], input_filepath, output_filepath):
+  with mock_git_and_check_output([],
+                                 input_filepath,
+                                 output_filepath,
+                                 write_mode='wb'):
     assert diff_generator._write_previous_version(file_data) == output_filepath
 
 
@@ -150,7 +156,6 @@ def test_get_diff(diff_generator, file_data):
         with patch('nbd.fileops.shutil.rmtree'):
           with patch('nbd.git.subprocess.call') as mock_call:
             diff_generator.get_diff([])
-            print mock_call.mock_calls
             mock_call.assert_called_once_with([
               'git',
               '--no-pager',

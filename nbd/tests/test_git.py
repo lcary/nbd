@@ -21,7 +21,7 @@ def git_cmd():
 
 def test_git_rev_parse_show_toplevel(git_cmd, test_output):
   with patch('nbd.git.subprocess.check_output') as mock_check_output:
-    mock_check_output.return_value = test_output
+    mock_check_output.return_value = test_output.encode()
     assert git_cmd.rev_parse_show_toplevel() == test_output.strip()
     mock_check_output.assert_called_once()
 

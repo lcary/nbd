@@ -17,7 +17,7 @@ def shell(cmd):
 
 def read_from_root(*names, **kwargs):
     with io.open(
-        os.path.join(repo_root, *names),
+        os.path.join(repo_root.decode(), *names),
         encoding=kwargs.get("encoding", "utf8")
     ) as fp:
         return fp.read()

@@ -76,21 +76,14 @@ def notebook_exporter():
 # ------------------------------ Test Cases ------------------------------
 
 
-def test_export_wrapper():
-  # can't initialize base class
-  with pytest.raises(TypeError):
-    export.ExporterWrapper()
-
-
 def test_export_wrapper_subclass(exporter_wrapper):
   assert exporter_wrapper.FILE_EXTENSION == TEST_EXTENSION
 
 
 def test_export_content(exporter_wrapper):
   m = mock_open()
-  with patch("__builtin__.open", m):
-    with patch('nbd.fileops.ospath'):
-      exporter_wrapper._export_content("TestNotebook", TEST_BASENAME)
+  with mock_write_file(m):
+    exporter_wrapper._export_content("TestNotebook", TEST_BASENAME)
   handle = m()
   handle.write.assert_called_once_with(TEST_CONTENT)
 

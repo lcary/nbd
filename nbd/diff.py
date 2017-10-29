@@ -66,7 +66,7 @@ class DiffGenerator(object):
       else:
         raise exc
     else:
-      write_file(ospath.join(file_data.tempdir, filename), content)
+      write_file(ospath.join(file_data.tempdir, filename), content, write_mode='wb')
       return output_filepath
 
   def _export_notebook_to_tempdir(self, file_id, file_data):
