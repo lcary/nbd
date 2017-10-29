@@ -12,6 +12,8 @@ logger = logging.getLogger()
 
 FileData = namedtuple('FileData', 'commit output_dir input_filepath tempdir')
 
+EXIT_CODE_128_FILE_NOT_FOUND = 128
+
 
 class DiffGenerator(object):
 
@@ -57,7 +59,7 @@ class DiffGenerator(object):
       # If git shows the file at the input path, then we assume it was not renamed
       content = self._git_cmd.show(file_data.input_filepath, commit=file_data.commit)
     except CalledProcessError as exc:
-      if exc.returncode == 128:
+      if exc.returncode == EXIT_CODE_128_FILE_NOT_FOUND:
         # The file does not exist in git history, indicated by the above exit code.
         # In this case, search git history to see if the file was renamed:
         return self._try_write_renamed_file(file_data)
