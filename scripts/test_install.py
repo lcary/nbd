@@ -12,33 +12,33 @@ os.chdir(repo_root)
 
 
 def shell(cmd):
-    check_call(cmd, shell=True)
+  check_call(cmd, shell=True)
 
 
 def read_from_root(*names, **kwargs):
-    with io.open(
-        os.path.join(repo_root.decode(), *names),
-        encoding=kwargs.get("encoding", "utf8")
-    ) as fp:
-        return fp.read()
+  with io.open(
+    os.path.join(repo_root.decode(), *names),
+    encoding=kwargs.get("encoding", "utf8")
+  ) as fp:
+    return fp.read()
 
 
 def find_version(*file_paths):
-    version_file = read_from_root(*file_paths)
-    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
-                              version_file, re.M)
-    if version_match:
-        return version_match.group(1)
-    raise RuntimeError("Unable to find version string.")
+  version_file = read_from_root(*file_paths)
+  version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                version_file, re.M)
+  if version_match:
+    return version_match.group(1)
+  raise RuntimeError("Unable to find version string.")
 
 
 # clean
 shell('rm -rf dist/ build/')
 
 try:
-    shell('pip uninstall -y nbd')
+  shell('pip uninstall -y nbd')
 except CalledProcessError:
-    print("Already uninstalled")
+  print("Already uninstalled")
 
 # build
 shell('python setup.py bdist')
