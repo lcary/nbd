@@ -5,12 +5,12 @@ import logging
 from os import getcwd
 from os import path as ospath
 
-from .command import cd_if_necessary
-from .const import PKG_NAME
-from .diff import DiffGenerator
-from .export import NotebookExporter
-from .fileops import normrelpath
-from .git import (Git, HEAD)
+from nbd.command import cd_if_necessary
+from nbd.const import PKG_NAME
+from nbd.diff import DiffGenerator
+from nbd.export import NotebookExporter
+from nbd.fileops import normrelpath
+from nbd.git import (Git, HEAD)
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -104,7 +104,9 @@ def main():
   nb_filepaths = map(ospath.abspath, args.notebooks)
 
   # cd to the root of the git repo
-  repo_root = Git.rev_parse_show_toplevel()
+  git = Git()
+  repo_root = git.rev_parse_show_toplevel()
+
   with cd_if_necessary(repo_root):
 
     # relativize absolute filepaths to root of repo
@@ -112,6 +114,7 @@ def main():
 
     # export notebooks to various git-diff-friendly formats in tempdir
     diff_gen = DiffGenerator(
+      git,
       nb_filepaths,
       args.old_commit,
       args.new_commit,

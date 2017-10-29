@@ -4,11 +4,10 @@ import logging
 from os import path as ospath
 from subprocess import CalledProcessError
 
-from .command import (ANSI_LIGHT_GREEN, ANSI_LIGHT_RED, echo)
-from .const import PKG_NAME
-from .export import NotebookExporter
-from .fileops import (get_file_id, mktempdir, write_file)
-from .git import Git
+from nbd.command import (ANSI_LIGHT_GREEN, ANSI_LIGHT_RED, echo)
+from nbd.const import PKG_NAME
+from nbd.export import NotebookExporter
+from nbd.fileops import (get_file_id, mktempdir, write_file)
 
 logger = logging.getLogger()
 
@@ -17,12 +16,13 @@ FileData = namedtuple('FileData', 'commit output_dir input_filepath tempdir')
 
 class DiffGenerator(object):
 
-  def __init__(self, filepaths, old_commit, new_commit, export_formats):
+  def __init__(self, git, filepaths, old_commit, new_commit, export_formats):
+    self._git = git
     self._filepaths = filepaths
     self._old_commit = old_commit
     self._new_commit = new_commit
     self._export_formats = export_formats
-    self._parser = GitDiffParser()
+    self._parser = GitDiffParser(self._git)
 
   def _try_retrieve_renamed_file(self, file_data):
     """
@@ -30,7 +30,7 @@ class DiffGenerator(object):
     Return the path the newly written file in the tempdir.
     """
     old_fp = self._parser.retreive_renamed_file(file_data)
-    content = Git.show(old_fp, commit=file_data.commit)
+    content = self._git.show(old_fp, commit=file_data.commit)
     filepath = ospath.join(file_data.tempdir, ospath.basename(old_fp))
     write_file(filepath, content)
     return filepath
@@ -55,7 +55,7 @@ class DiffGenerator(object):
     output_filepath = ospath.join(file_data.tempdir, filename)
 
     try:
-      content = Git.show(file_data.input_filepath, commit=file_data.commit)
+      content = self._git.show(file_data.input_filepath, commit=file_data.commit)
     except CalledProcessError as exc:
       if exc.returncode == 128:
         # Git could not find the file. Try writing a renamed version:
@@ -105,7 +105,7 @@ class DiffGenerator(object):
       # show git diff of exported data within tempdir
       msg = "git diff output below (no output == no diff)"
       echo(PKG_NAME, ANSI_LIGHT_GREEN, msg)
-      Git.diff_no_index(old_dir, new_dir, options=git_diff_options)
+      self._git.diff_no_index(old_dir, new_dir, options=git_diff_options)
 
 
 class GitDiffParser(object):
@@ -128,6 +128,9 @@ class GitDiffParser(object):
   If a renamed file cannot be found, an exception is raised.
   """
 
+  def __init__(self, git):
+    self._git = git
+
   class RenamedFileNotFound(Exception):
     """
     Raise when unable to find renamed files in git-diff output.
@@ -146,12 +149,11 @@ class GitDiffParser(object):
         return old_fp
     return None
 
-  @staticmethod
-  def _git_diff_renamed_files(commit):
+  def _git_diff_renamed_files(self, commit):
     """
     This function runs the git-diff command and returns rename lines.
     """
-    output = Git.diff_name_status(commit)
+    output = self._git.diff_name_status(commit)
     lines = output.split('\n')
     return [l for l in lines if l.startswith('R')]
 

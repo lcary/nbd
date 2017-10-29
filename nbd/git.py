@@ -1,6 +1,6 @@
-from subprocess import (call, check_output)
+import subprocess
 
-from .command import (ANSI_LIGHT_RED, echo)
+from nbd.command import (ANSI_LIGHT_RED, echo)
 
 HEAD = 'HEAD'
 
@@ -9,26 +9,25 @@ class Git(object):
   Namespace for git functions.
   """
 
-  # GIT should become an instance attribute if the need to specify
-  # an absolute path to a user's git binary ever arises.
-  GIT = 'git'
+  def __init__(self, command=subprocess):
+    self._command = command
+    # this should become a filesystem path if the need to specify
+    # an absolute path to a user's git binary ever arises:
+    self._git = 'git'
 
-  @staticmethod
-  def rev_parse_show_toplevel():
-    args = [Git.GIT, 'rev-parse', '--show-toplevel']
-    echo(Git.GIT, ANSI_LIGHT_RED, " ".join(args))
-    return check_output(args).strip('\n')
+  def rev_parse_show_toplevel(self):
+    args = [self._git, 'rev-parse', '--show-toplevel']
+    echo(self._git, ANSI_LIGHT_RED, " ".join(args))
+    return self._command.check_output(args).strip('\n')
 
-  @staticmethod
-  def show(filepath, commit=HEAD):
-    args = [Git.GIT, 'show', '{}:{}'.format(commit, filepath)]
-    echo(Git.GIT, ANSI_LIGHT_RED, " ".join(args))
-    return check_output(args)
+  def show(self, filepath, commit=HEAD):
+    args = [self._git, 'show', '{}:{}'.format(commit, filepath)]
+    echo(self._git, ANSI_LIGHT_RED, " ".join(args))
+    return self._command.check_output(args)
 
-  @staticmethod
-  def diff_no_index(file_a, file_b, options=None):
+  def diff_no_index(self, file_a, file_b, options=None):
     args = [
-      Git.GIT,
+      self._git,
       '--no-pager',
       'diff',
       '--exit-code',
@@ -37,11 +36,10 @@ class Git(object):
     if options is not None:
       args.extend(options)
     args.extend([file_a, file_b])
-    echo(Git.GIT, ANSI_LIGHT_RED, " ".join(args))
-    call(args)
+    echo(self._git, ANSI_LIGHT_RED, " ".join(args))
+    self._command.call(args)
 
-  @staticmethod
-  def diff_name_status(commit):
-    args = [Git.GIT, 'diff', commit, '--name-status']
-    echo(Git.GIT, ANSI_LIGHT_RED, " ".join(args))
-    return check_output(args)
+  def diff_name_status(self, commit):
+    args = [self._git, 'diff', commit, '--name-status']
+    echo(self._git, ANSI_LIGHT_RED, " ".join(args))
+    return self._command.check_output(args)

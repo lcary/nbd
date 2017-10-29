@@ -6,7 +6,7 @@ import logging
 import nbformat
 from nbconvert import (PythonExporter, RSTExporter)
 
-from .fileops import (get_file_id, write_file)
+from nbd.fileops import (get_file_id, write_file)
 
 EXPORT_FORMAT_PYTHON = 'python'
 EXPORT_FORMAT_RST = 'rst'
