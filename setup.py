@@ -53,9 +53,11 @@ setup(
         # license (needs to match "license" above)
         'License :: OSI Approved :: MIT License',
 
-        # supported oython versions
+        # supported python versions
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
     ],
 
     # what the project relates to
