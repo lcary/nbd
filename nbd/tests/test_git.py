@@ -3,6 +3,7 @@ from .context import git
 from mock import patch
 import pytest
 
+
 @pytest.fixture
 def git_cmd():
     return git.Git()
