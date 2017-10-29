@@ -30,8 +30,10 @@ def exporter_wrapper():
 
     return TestExporterWrapper()
 
+
 def test_export_wrapper_subclass(exporter_wrapper):
     assert exporter_wrapper.FILE_EXTENSION == TEST_EXTENSION
+
 
 def test_export_content(exporter_wrapper):
     m = mock_open()
@@ -40,6 +42,7 @@ def test_export_content(exporter_wrapper):
             exporter_wrapper._export_content("TestNotebook", "test_notebook")
     handle = m()
     handle.write.assert_called_once_with(TEST_NB_CONTENT)
+
 
 def test_get_filepath(exporter_wrapper):
     expect = 'mydir/myfile.{}'.format(TEST_EXTENSION)
