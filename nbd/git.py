@@ -4,6 +4,8 @@ from nbd.command import (ANSI_LIGHT_RED, echo)
 
 HEAD = 'HEAD'
 
+DEFAULT_ENCODING = 'utf-8'
+
 class Git(object):
   """
   Namespace for git functions.
@@ -17,7 +19,9 @@ class Git(object):
   def rev_parse_show_toplevel(self):
     args = [self._git, 'rev-parse', '--show-toplevel']
     echo(self._git, ANSI_LIGHT_RED, " ".join(args))
-    return subprocess.check_output(args).strip('\n')
+    output = subprocess.check_output(args)
+    decoded = output.decode(DEFAULT_ENCODING)
+    return decoded.strip('\n')
 
   def show(self, filepath, commit=HEAD):
     args = [self._git, 'show', '{}:{}'.format(commit, filepath)]
