@@ -27,9 +27,9 @@ This will show you most of what has changed in the ``In[1]:`` and
 ``Out[1]:`` lines of the notebook.
 
 The output of ``ndb`` is
-`git-diff <https://git-scm.com/docs/git-diff>`__ output and can be piped
-to other commands like `less(1) <https://linux.die.net/man/1/less>`__
-and `tee(1) <https://linux.die.net/man/1/tee>`__.
+`git-diff <https://git-scm.com/docs/git-diff>`_ output and can be piped
+to other commands like `less(1) <https://linux.die.net/man/1/less>`_
+and `tee(1) <https://linux.die.net/man/1/tee>`_.
 
 Requirements
 ------------
@@ -63,7 +63,7 @@ Simple usage:
 
     nbd <notebook>
 
-Pipe to `less(1) <https://linux.die.net/man/1/less>`__:
+Pipe to `less(1) <https://linux.die.net/man/1/less>`_:
 
 ::
 
@@ -98,7 +98,7 @@ Tutorial
 --------
 
 See the tutorial in the ``demo/`` directory: `demo
-tutorial <demo/tutorial.rst>`__.
+tutorial <demo/tutorial.rst>`_.
 
 .. raw:: html
 
