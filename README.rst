@@ -99,7 +99,3 @@ Tutorial
 
 See the tutorial in the ``demo/`` directory: `demo
 tutorial <demo/tutorial.rst>`_.
-
-.. raw:: html
-
-   <!-- links: -->
