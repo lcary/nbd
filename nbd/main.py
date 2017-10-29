@@ -4,6 +4,7 @@ from argparse import (ArgumentParser, ArgumentDefaultsHelpFormatter)
 import logging
 from os import getcwd
 from os import path as ospath
+import sys
 
 from nbd.command import cd_if_necessary
 from nbd.const import PKG_NAME
@@ -16,7 +17,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
-def _get_args():
+def _parse_args(args):
   desc = 'The lightweight ipython notebook diffing tool'
   parser = ArgumentParser(
     description=desc,
@@ -67,7 +68,7 @@ def _get_args():
     dest='git_diff_options',
     action='append',
     help='additional options to pass to git-diff')
-  return parser.parse_args()
+  return parser.parse_args(args)
 
 
 def _log_setup(debug_mode, log_dir, log_to_disk):
@@ -97,7 +98,7 @@ def _log_setup(debug_mode, log_dir, log_to_disk):
 
 def main():
   # commandline args
-  args = _get_args()
+  args = _parse_args(sys.argv[1:])
   _log_setup(args.debug, args.log_dir, args.log_to_disk)
 
   # convert input paths to absolute paths
