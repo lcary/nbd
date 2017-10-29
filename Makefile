@@ -10,4 +10,4 @@ install:
 release:
 	python scripts/pypi_upload.py
 
-.PHONY: init test
+.PHONY: init test install release
