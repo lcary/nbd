@@ -9,8 +9,7 @@ class Git(object):
   Namespace for git functions.
   """
 
-  def __init__(self, command=subprocess):
-    self._command = command
+  def __init__(self):
     # this should become a filesystem path if the need to specify
     # an absolute path to a user's git binary ever arises:
     self._git = 'git'
@@ -18,12 +17,12 @@ class Git(object):
   def rev_parse_show_toplevel(self):
     args = [self._git, 'rev-parse', '--show-toplevel']
     echo(self._git, ANSI_LIGHT_RED, " ".join(args))
-    return self._command.check_output(args).strip('\n')
+    return subprocess.check_output(args).strip('\n')
 
   def show(self, filepath, commit=HEAD):
     args = [self._git, 'show', '{}:{}'.format(commit, filepath)]
     echo(self._git, ANSI_LIGHT_RED, " ".join(args))
-    return self._command.check_output(args)
+    return subprocess.check_output(args)
 
   def diff_no_index(self, file_a, file_b, options=None):
     args = [
@@ -37,9 +36,9 @@ class Git(object):
       args.extend(options)
     args.extend([file_a, file_b])
     echo(self._git, ANSI_LIGHT_RED, " ".join(args))
-    self._command.call(args)
+    subprocess.call(args)
 
   def diff_name_status(self, commit):
     args = [self._git, 'diff', commit, '--name-status']
     echo(self._git, ANSI_LIGHT_RED, " ".join(args))
-    return self._command.check_output(args)
+    return subprocess.check_output(args)

@@ -4,6 +4,7 @@ from argparse import (ArgumentParser, ArgumentDefaultsHelpFormatter)
 import logging
 from os import getcwd
 from os import path as ospath
+import sys
 
 from nbd.command import cd_if_necessary
 from nbd.const import PKG_NAME
@@ -16,7 +17,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
-def _get_args():
+def _parse_args(args):
   desc = 'The lightweight ipython notebook diffing tool'
   parser = ArgumentParser(
     description=desc,
@@ -67,7 +68,7 @@ def _get_args():
     dest='git_diff_options',
     action='append',
     help='additional options to pass to git-diff')
-  return parser.parse_args()
+  return parser.parse_args(args)
 
 
 def _log_setup(debug_mode, log_dir, log_to_disk):
@@ -97,29 +98,34 @@ def _log_setup(debug_mode, log_dir, log_to_disk):
 
 def main():
   # commandline args
-  args = _get_args()
+  args = _parse_args(sys.argv[1:])
   _log_setup(args.debug, args.log_dir, args.log_to_disk)
 
   # convert input paths to absolute paths
   nb_filepaths = map(ospath.abspath, args.notebooks)
 
   # cd to the root of the git repo
-  git = Git()
-  repo_root = git.rev_parse_show_toplevel()
+  git_cmd = Git()
+  repo_root = git_cmd.rev_parse_show_toplevel()
 
   with cd_if_necessary(repo_root):
 
     # relativize absolute filepaths to root of repo
     nb_filepaths = [normrelpath(fp, repo_root) for fp in nb_filepaths]
 
+    exporter = NotebookExporter(
+      args.nbformat_version,
+      export_formats=args.export_formats)
+
     # export notebooks to various git-diff-friendly formats in tempdir
     diff_gen = DiffGenerator(
-      git,
+      git_cmd,
       nb_filepaths,
       args.old_commit,
       args.new_commit,
-      args.export_formats)
-    diff_gen.get_diff(args.nbformat_version, args.git_diff_options)
+      exporter)
+
+    diff_gen.get_diff(args.git_diff_options)
 
 if __name__ == '__main__':
   main()
