@@ -3,6 +3,9 @@ nbd
 
 A lightweight ipython/jupyter notebook diffing tool.
 
+.. image:: https://travis-ci.org/lcary/nbd.svg?branch=master
+    :alt: build-status-image
+
 Purpose
 -------
 
