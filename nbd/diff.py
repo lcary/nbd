@@ -6,7 +6,6 @@ from subprocess import CalledProcessError
 
 from nbd.command import (ANSI_LIGHT_GREEN, ANSI_LIGHT_RED, echo)
 from nbd.const import PKG_NAME
-from nbd.export import NotebookExporter
 from nbd.fileops import (get_file_id, mktempdir, write_file)
 
 logger = logging.getLogger()
@@ -16,13 +15,13 @@ FileData = namedtuple('FileData', 'commit output_dir input_filepath tempdir')
 
 class DiffGenerator(object):
 
-  def __init__(self, git, filepaths, old_commit, new_commit, export_formats):
+  def __init__(self, git, filepaths, old_commit, new_commit, exporter):
     self._git = git
     self._filepaths = filepaths
     self._old_commit = old_commit
     self._new_commit = new_commit
-    self._export_formats = export_formats
     self._parser = GitDiffParser(self._git)
+    self.exporter = exporter
 
   def _try_retrieve_renamed_file(self, file_data):
     """
@@ -66,7 +65,7 @@ class DiffGenerator(object):
       write_file(ospath.join(file_data.tempdir, filename), content)
       return output_filepath
 
-  def _export_notebook_to_tempdir(self, file_id, file_data, nbformat_version):
+  def _export_notebook_to_tempdir(self, file_id, file_data):
     """
     Export data from the notebook to a temporary directory.
     """
@@ -79,19 +78,18 @@ class DiffGenerator(object):
       output_filepath = self._write_previous_version(file_data)
 
     if output_filepath is not None:
-      exporter = NotebookExporter(file_data.output_dir, self._export_formats)
-      exporter.process_notebook(file_id, output_filepath, nbformat_version)
+      self.exporter.process_notebook(file_id, output_filepath, file_data.output_dir)
 
-  def _export_old_and_new_notebooks(self, tempdir, old_dir, new_dir, nbformat_version):
+  def _export_old_and_new_notebooks(self, tempdir, old_dir, new_dir):
     for filepath in self._filepaths:
       file_id = get_file_id(filepath)
       old_file_data = FileData(self._old_commit, old_dir, filepath, tempdir)
       new_file_data = FileData(self._new_commit, new_dir, filepath, tempdir)
-      self._export_notebook_to_tempdir(file_id, old_file_data, nbformat_version)
-      self._export_notebook_to_tempdir(file_id, new_file_data, nbformat_version)
+      self._export_notebook_to_tempdir(file_id, old_file_data)
+      self._export_notebook_to_tempdir(file_id, new_file_data)
 
 
-  def get_diff(self, nbformat_version, git_diff_options):
+  def get_diff(self, git_diff_options):
     with mktempdir() as tempdir:
       # create old and new directories
       old_dir = ospath.join(tempdir, 'old')
@@ -100,7 +98,7 @@ class DiffGenerator(object):
       dir_util.mkpath(new_dir)
 
       # # export data from notebooks in git repo and notebooks in tempdir
-      self._export_old_and_new_notebooks(tempdir, old_dir, new_dir, nbformat_version)
+      self._export_old_and_new_notebooks(tempdir, old_dir, new_dir)
 
       # show git diff of exported data within tempdir
       msg = "git diff output below (no output == no diff)"

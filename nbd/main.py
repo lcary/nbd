@@ -112,14 +112,19 @@ def main():
     # relativize absolute filepaths to root of repo
     nb_filepaths = [normrelpath(fp, repo_root) for fp in nb_filepaths]
 
+    exporter = NotebookExporter(
+      args.nbformat_version,
+      export_formats=args.export_formats)
+
     # export notebooks to various git-diff-friendly formats in tempdir
     diff_gen = DiffGenerator(
       git,
       nb_filepaths,
       args.old_commit,
       args.new_commit,
-      args.export_formats)
-    diff_gen.get_diff(args.nbformat_version, args.git_diff_options)
+      exporter)
+
+    diff_gen.get_diff(args.git_diff_options)
 
 if __name__ == '__main__':
   main()
