@@ -1,4 +1,3 @@
-
 from abc import (ABCMeta, abstractmethod)
 from os import path as ospath
 import logging
